@@ -1,3 +1,19 @@
+// goiex: Golang interface to IEX Cloud API
+// Copyright (C) 2019 Brian Hazeltine
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 package helper
 
 import (
@@ -7,6 +23,14 @@ import (
 	"reflect"
 	"runtime"
 )
+
+// RepoBaseDir contains the absolute path to the root of the repository on disk.
+// This is determined by searching up the directory tree until a file called
+// go.mod appears in the current directory.
+var RepoBaseDir string
+
+// RepoBasePkg contains the name of the module (eg github.com/myuser/someproj)
+var RepoBasePkg string
 
 func init() {
 	_, file, _, ok := runtime.Caller(0)
@@ -35,6 +59,3 @@ func init() {
 		return pkgPath
 	}(file)
 }
-
-var RepoBaseDir string
-var RepoBasePkg string
