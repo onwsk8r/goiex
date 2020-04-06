@@ -40,20 +40,20 @@ func Testdata(path string) (io.ReadCloser, error) {
 // be compatible with Golang's json.Unmarshal().
 func TestdataFromJSON(path string, target interface{}) {
 	rc, err := Testdata(path)
-	Expect(err).ToNot(HaveOccurred())
+	ExpectWithOffset(1, err).ToNot(HaveOccurred())
 	defer rc.Close()
 
 	dec := json.NewDecoder(rc)
 	dec.DisallowUnknownFields()
-	Expect(dec.Decode(target)).To(Succeed())
+	ExpectWithOffset(1, dec.Decode(target)).To(Succeed())
 }
 
 // TestdataReponder registers an httpmock responder that responds with the given testdata.
 func TestdataResponder(url, testdata string) {
 	rc, err := Testdata(testdata)
-	Expect(err).ToNot(HaveOccurred(), "error loading testdata file")
+	ExpectWithOffset(1, err).ToNot(HaveOccurred(), "error loading testdata file")
 	data, err := ioutil.ReadAll(rc)
-	Expect(err).ToNot(HaveOccurred(), "error reading testdata file")
+	ExpectWithOffset(1, err).ToNot(HaveOccurred(), "error reading testdata file")
 	httpmock.RegisterResponder("GET", url,
 		httpmock.NewBytesResponder(http.StatusOK, data))
 }
