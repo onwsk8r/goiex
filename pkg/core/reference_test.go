@@ -18,7 +18,6 @@ package core_test
 
 import (
 	"context"
-	"io/ioutil"
 
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
@@ -42,12 +41,7 @@ var _ = Describe("Reference", func() {
 
 	Describe("Symbols", func() {
 		BeforeEach(func() {
-			rc, err := helper.Testdata("core/reference/symbols.json")
-			Expect(err).ToNot(HaveOccurred())
-			data, err := ioutil.ReadAll(rc)
-			Expect(err).ToNot(HaveOccurred(), "error reading testdata file")
-			httpmock.RegisterResponder("GET", "/stable/ref-data/symbols",
-				httpmock.NewBytesResponder(200, data))
+			helper.TestdataResponder("/stable/ref-data/symbols", "core/reference/symbols.json")
 		})
 
 		It("should get all the symbols", func() {

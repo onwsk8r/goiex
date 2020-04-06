@@ -19,9 +19,12 @@ package helper
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/gomega" // nolint: stylecheck
 )
 
@@ -43,4 +46,14 @@ func TestdataFromJSON(path string, target interface{}) {
 	dec := json.NewDecoder(rc)
 	dec.DisallowUnknownFields()
 	Expect(dec.Decode(target)).To(Succeed())
+}
+
+// TestdataReponder registers an httpmock responder that responds with the given testdata.
+func TestdataResponder(url, testdata string) {
+	rc, err := Testdata(testdata)
+	Expect(err).ToNot(HaveOccurred(), "error loading testdata file")
+	data, err := ioutil.ReadAll(rc)
+	Expect(err).ToNot(HaveOccurred(), "error reading testdata file")
+	httpmock.RegisterResponder("GET", url,
+		httpmock.NewBytesResponder(http.StatusOK, data))
 }
