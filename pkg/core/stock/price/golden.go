@@ -23,3 +23,9 @@ func GoldenHistorical() (h Historical) {
 	helper.FromGolden("historical", &h)
 	return
 }
+
+// GoldenPreviousDay returns golden data for the PreviousDay type
+func GoldenPreviousDay() (p PreviousDay) {
+	helper.FromGolden("previous_day", &p)
+	return
+}
