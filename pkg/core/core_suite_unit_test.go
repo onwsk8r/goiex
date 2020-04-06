@@ -14,19 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// +build !integration
+
 package core_test
 
 import (
-	"testing"
-
+	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onwsk8r/goiex/pkg/iexcloud"
+	"github.com/onwsk8r/goiex/internal/api"
 )
 
-var client iexcloud.Client
+var _ = BeforeSuite(func() {
+	httpmock.Activate()
 
-func TestCore(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Core Suite")
-}
+	var err error
+	client, err = api.NewClient("pk_sometoken", "")
+	Expect(err).ToNot(HaveOccurred())
+})
+
+var _ = AfterEach(httpmock.Reset)
+var _ = AfterSuite(httpmock.Deactivate)

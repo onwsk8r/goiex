@@ -14,19 +14,34 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// +build integration
+
 package core_test
 
 import (
-	"testing"
+	"context"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onwsk8r/goiex/pkg/iexcloud"
+
+	. "github.com/onwsk8r/goiex/pkg/core"
 )
 
-var client iexcloud.Client
+var _ = Describe("Reference Integration", func() {
+	var ref *Reference
+	BeforeEach(func() {
+		ref = NewReference(client)
+	})
 
-func TestCore(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Core Suite")
-}
+	Describe("Symbols", func() {
+		It("should get the symbols", func() {
+			res, err := ref.Symbols(context.Background())
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(res)).To(BeNumerically(">", 8000))
+
+			for _, val := range res {
+				Expect(val.Validate()).To(Succeed())
+			}
+		})
+	})
+})

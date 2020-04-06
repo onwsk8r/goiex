@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// +build !integration
+
 package core_test
 
 import (
@@ -32,12 +34,7 @@ var _ = Describe("Reference", func() {
 	var ref *Reference
 
 	BeforeEach(func() {
-		httpmock.Activate()
 		ref = NewReference(client)
-	})
-
-	AfterEach(func() {
-		httpmock.DeactivateAndReset()
 	})
 
 	Describe("Symbols", func() {
