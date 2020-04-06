@@ -26,20 +26,20 @@ import (
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
-var _ = Describe("Historical", func() { // nolint: dupl
-	var expected Historical
+var _ = Describe("Intraday", func() { // nolint: dupl
+	var expected Intraday
 	BeforeEach(func() {
-		expected = GoldenHistorical()
+		expected = GoldenIntraday()
 	})
 
-	It("should parse historical prices correctly", func() {
-		var res []Historical
-		helper.TestdataFromJSON("core/stock/price/historical.json", &res)
+	It("should parse intraday prices correctly", func() {
+		var res []Intraday
+		helper.TestdataFromJSON("core/stock/price/intraday.json", &res)
 		Expect(res[0]).To(Equal(expected))
 	})
 
 	Describe("Validate()", func() {
-		It("should succeed if the Historical is valid", func() {
+		It("should succeed if the Intraday is valid", func() {
 			Expect(expected.Validate()).To(Succeed())
 		})
 		It("should return an error if the Date is zero valued", func() {
@@ -50,34 +50,40 @@ var _ = Describe("Historical", func() { // nolint: dupl
 			expected.Close = 0
 			Expect(expected.Validate()).To(MatchError("close is zero"))
 		})
-		It("should return an error if the UClose is zero", func() {
-			expected.UClose = 0
-			Expect(expected.Validate()).To(MatchError("unadjusted close is zero"))
+		It("should return an error if the MarketClose is zero", func() {
+			expected.MarketClose = 0
+			Expect(expected.Validate()).To(MatchError("market close is zero"))
 		})
 	})
 })
 
-var _ = XDescribe("Historical Golden", func() {
+var _ = XDescribe("Intraday Golden", func() {
 	It("should load the golden file", func() {
 		loc, err := time.LoadLocation("UTC")
 		Expect(err).ToNot(HaveOccurred())
-		golden := Historical{
-			Date:           time.Date(2017, time.April, 3, 0, 0, 0, 0, loc),
-			Open:           143.1192,
-			High:           143.5275,
-			Low:            142.4619,
-			Close:          143.1092,
-			Volume:         19985714,
-			UOpen:          143.1192,
-			UHigh:          143.5275,
-			ULow:           142.4619,
-			UClose:         143.1092,
-			UVolume:        19985714,
-			Change:         0.039835,
-			ChangePercent:  0.028,
-			Label:          "Apr 03, 17",
-			ChangeOverTime: -0.0039,
+		golden := Intraday{
+			Date:                 time.Date(2017, 12, 15, 9, 30, 0, 0, loc),
+			Minute:               "09:30",
+			Label:                "09:30 AM",
+			MarketOpen:           143.98,
+			MarketClose:          143.775,
+			MarketHigh:           143.98,
+			MarketLow:            143.775,
+			MarketAverage:        143.889,
+			MarketVolume:         3070,
+			MarketNotional:       441740.275,
+			MarketNumberOfTrades: 20,
+			MarketChangeOverTime: -0.004,
+			High:                 143.98,
+			Low:                  143.775,
+			Open:                 143.98,
+			Close:                143.775,
+			Average:              143.889,
+			Volume:               3070,
+			Notional:             441740.275,
+			NumberOfTrades:       20,
+			ChangeOverTime:       -0.0039,
 		}
-		helper.ToGolden("historical", golden)
+		helper.ToGolden("intraday", golden)
 	})
 })
