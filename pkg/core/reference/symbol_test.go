@@ -30,30 +30,7 @@ var _ = Describe("Symbol", func() {
 	var expected []Symbol
 
 	BeforeEach(func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		expected = []Symbol{
-			Symbol{
-				Symbol:   "A",
-				Name:     "Agilent Technologies Inc.",
-				Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, loc),
-				Type:     "cs",
-				IEXID:    "IEX_46574843354B2D52",
-				Region:   "US",
-				Currency: "USD",
-				Enabled:  true,
-			},
-			Symbol{
-				Symbol:   "AA",
-				Name:     "Alcoa Corp.",
-				Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, loc),
-				Type:     "cs",
-				IEXID:    "IEX_4238333734532D52",
-				Region:   "US",
-				Currency: "USD",
-				Enabled:  true,
-			},
-		}
+		expected = GoldenSymbol()
 	})
 
 	It("should parse symbols correctly", func() {
@@ -83,5 +60,35 @@ var _ = Describe("Symbol", func() {
 			s.Date = time.Time{}
 			Expect(s.Validate()).To(MatchError("missing date"))
 		})
+	})
+})
+
+var _ = XDescribe("Symbol Golden", func() {
+	It("should load the golden file", func() {
+		loc, err := time.LoadLocation("UTC")
+		Expect(err).ToNot(HaveOccurred())
+		golden := []Symbol{
+			Symbol{
+				Symbol:   "A",
+				Name:     "Agilent Technologies Inc.",
+				Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, loc),
+				Type:     "cs",
+				IEXID:    "IEX_46574843354B2D52",
+				Region:   "US",
+				Currency: "USD",
+				Enabled:  true,
+			},
+			Symbol{
+				Symbol:   "AA",
+				Name:     "Alcoa Corp.",
+				Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, loc),
+				Type:     "cs",
+				IEXID:    "IEX_4238333734532D52",
+				Region:   "US",
+				Currency: "USD",
+				Enabled:  true,
+			},
+		}
+		helper.ToGolden("symbol", golden)
 	})
 })

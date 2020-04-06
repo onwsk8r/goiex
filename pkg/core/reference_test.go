@@ -24,6 +24,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "github.com/onwsk8r/goiex/pkg/core"
+	"github.com/onwsk8r/goiex/pkg/core/reference"
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
@@ -45,10 +46,10 @@ var _ = Describe("Reference", func() {
 		})
 
 		It("should get all the symbols", func() {
-			_, err := ref.Symbols(context.Background())
+			res, err := ref.Symbols(context.Background())
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			// Expect(res).To(ConsistOf(expected))
+			Expect(res).To(ConsistOf(reference.GoldenSymbol()))
 		})
 	})
 })
