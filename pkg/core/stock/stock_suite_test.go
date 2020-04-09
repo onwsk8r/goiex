@@ -19,11 +19,27 @@ package stock_test
 import (
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onwsk8r/goiex/internal/api"
+	"github.com/onwsk8r/goiex/pkg/iexcloud"
 )
+
+var client iexcloud.Client
 
 func TestStock(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Stock Suite")
 }
+
+var _ = BeforeSuite(func() {
+	httpmock.Activate()
+
+	var err error
+	client, err = api.NewClient("pk_sometoken", "")
+	Expect(err).ToNot(HaveOccurred())
+})
+
+var _ = AfterEach(httpmock.Reset)
+var _ = AfterSuite(httpmock.Deactivate)
