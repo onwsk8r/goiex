@@ -35,7 +35,13 @@ var _ = Describe("Intraday", func() { // nolint: dupl
 	It("should parse intraday prices correctly", func() {
 		var res []Intraday
 		helper.TestdataFromJSON("core/stock/price/intraday.json", &res)
-		Expect(res[0]).To(Equal(expected))
+
+		// See https://github.com/golang/go/issues/10089#issuecomment-77463157 for why this is necessary
+		// My guess is because the "values pointed to" for the location are identical, but each time.Time
+		// contains a different pointer (ie living in a different memory address).
+		Expect(res[0].Date.Equal(expected.Date)).To(BeTrue(), "dates are inequal")
+		res[0].Date = expected.Date
+		Expect(res[0]).To(Equal(expected), "values are inequal")
 	})
 
 	Describe("Validate()", func() {
@@ -59,10 +65,10 @@ var _ = Describe("Intraday", func() { // nolint: dupl
 
 var _ = XDescribe("Intraday Golden", func() {
 	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
+		easternTime, err := time.LoadLocation("America/New_York")
 		Expect(err).ToNot(HaveOccurred())
 		golden := Intraday{
-			Date:                 time.Date(2017, 12, 15, 9, 30, 0, 0, loc),
+			Date:                 time.Date(2017, 12, 15, 9, 30, 0, 0, easternTime),
 			Minute:               "09:30",
 			Label:                "09:30 AM",
 			MarketOpen:           143.98,

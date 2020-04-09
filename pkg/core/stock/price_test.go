@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// +build !integration
+
 package stock_test
 
 import (
@@ -71,7 +73,11 @@ var _ = Describe("Price", func() {
 			res, err := p.Intraday(context.Background(), "twtr")
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(ConsistOf(price.GoldenIntraday()))
+
+			expected := price.GoldenIntraday()
+			Expect(res[0].Date.Equal(expected.Date)).To(BeTrue(), "dates are inequal")
+			res[0].Date = expected.Date
+			Expect(res[0]).To(Equal(expected))
 		})
 	})
 

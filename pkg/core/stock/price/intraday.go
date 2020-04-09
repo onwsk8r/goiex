@@ -61,9 +61,13 @@ func (i *Intraday) UnmarshalJSON(data []byte) (err error) {
 		Date string `json:"date"`
 	}
 	tmp := new(embedded)
-	if err = json.Unmarshal(data, tmp); err == nil {
-		*i = Intraday(tmp.intraday)
-		i.Date, err = time.Parse("2006-01-02T15:04", fmt.Sprintf("%sT%s", tmp.Date, tmp.Minute))
+	if err = json.Unmarshal(data, tmp); err != nil {
+		return
+	}
+	*i = Intraday(tmp.intraday)
+	var easternTime *time.Location
+	if easternTime, err = time.LoadLocation("America/New_York"); err == nil {
+		i.Date, err = time.ParseInLocation("2006-01-02T15:04", fmt.Sprintf("%sT%s", tmp.Date, tmp.Minute), easternTime)
 		log.Debug().Str("date", tmp.Date).Str("minute", tmp.Minute).Time("parsed", i.Date).Msg("intraday: parsed date")
 	}
 	return
