@@ -14,19 +14,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// +build integration
+
 package stock_test
 
 import (
-	"testing"
+	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onwsk8r/goiex/pkg/iexcloud"
+
+	"github.com/onwsk8r/goiex/internal/api"
 )
 
-var client iexcloud.Client
+var _ = BeforeSuite(func() {
+	var (
+		token string
+		ok    bool
+		err   error
+	)
 
-func TestStock(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Stock Suite")
-}
+	if token, ok = os.LookupEnv("GOIEX_TOKEN"); !ok {
+		Fail("GOIEX_TOKEN must be set")
+	}
+	client, err = api.NewClient(token, "")
+	Expect(err).ToNot(HaveOccurred())
+})

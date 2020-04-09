@@ -47,7 +47,7 @@ type Historical struct {
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 // This function correctly translates the date field, which is specified as "YYYY-MM-DD",
 // into a time.Time by using time.Parse().
-// It will return an error if the JSON cannot be unmarshaled or if the date parsing fails.
+// It will return an error if the JSON cannot be unmarshaled, but NOT if the date parsing fails.
 func (h *Historical) UnmarshalJSON(data []byte) (err error) {
 	type historical Historical
 	type embedded struct {
@@ -57,7 +57,9 @@ func (h *Historical) UnmarshalJSON(data []byte) (err error) {
 	tmp := new(embedded)
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*h = Historical(tmp.historical)
-		h.Date, err = time.Parse("2006-01-02", tmp.Date)
+		// Ignore date parsing issues, which will happen especially on PreviousDayMarket
+		// calls where some array objects may be empty (ie "{}")
+		h.Date, _ = time.Parse("2006-01-02", tmp.Date) // nolint: errcheck
 		log.Debug().Str("original", tmp.Date).Time("parsed", h.Date).Msg("historical: parsed date")
 	}
 	return
