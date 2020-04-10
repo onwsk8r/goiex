@@ -29,3 +29,9 @@ func GoldenEarnings() (e []Earning) {
 	helper.FromGolden("earning", &e)
 	return
 }
+
+// GoldenSplit returns golden data for the Split type
+func GoldenSplit() (s Split) {
+	helper.FromGolden("split", &s)
+	return
+}
