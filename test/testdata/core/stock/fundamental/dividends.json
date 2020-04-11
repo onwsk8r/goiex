@@ -5,7 +5,7 @@
         "paymentDate": "2017-08-17",
         "recordDate": "2017-08-14",
         "declaredDate": "2017-08-01",
-        "amount": 0.63,
+        "amount": "0.63",
         "flag": "Dividend income",
         "currency": "USD",
         "description": "Apple declares dividend of .63",
