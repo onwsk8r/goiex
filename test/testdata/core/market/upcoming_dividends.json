@@ -1,0 +1,38 @@
+[
+  {
+    "exDate": "2020-06-16",
+    "paymentDate": "2020-06-26",
+    "recordDate": "2020-06-16",
+    "declaredDate": "2019-12-20",
+    "amount": "0",
+    "flag": null,
+    "currency": "",
+    "description": "krT SEeSCFu CB Trse hiTyMIa",
+    "frequency": null,
+    "symbol": "TUR"
+  },
+  {
+    "exDate": "2020-02-01",
+    "paymentDate": "2020-02-08",
+    "recordDate": "2020-01-26",
+    "declaredDate": "2019-11-27",
+    "amount": "0.0799",
+    "flag": "aChs",
+    "currency": "USD",
+    "description": "anrSyrrO sdieha",
+    "frequency": "holnytm",
+    "symbol": "GFY"
+  },
+  {
+    "exDate": "2020-04-02",
+    "paymentDate": null,
+    "recordDate": "2020-04-15",
+    "declaredDate": "2019-05-15",
+    "amount": "62",
+    "flag": "shaC",
+    "currency": "JPY",
+    "description": "eOrnrSsh adayri",
+    "frequency": "nea-unsmail",
+    "symbol": "UACJF"
+  }
+]
