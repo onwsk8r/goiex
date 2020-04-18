@@ -53,10 +53,6 @@ var _ = Describe("UpcomingDividend", func() { // nolint: dupl
 			expected[0].ExDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("ex date is missing"))
 		})
-		It("should return an error if the DeclaredDate is zero valued", func() {
-			expected[0].DeclaredDate = time.Time{}
-			Expect(expected[0].Validate()).To(MatchError("declared date is missing"))
-		})
 	})
 })
 

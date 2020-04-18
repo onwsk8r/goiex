@@ -31,7 +31,7 @@ type UpcomingDividend struct {
 }
 
 // Validate satisfies the Validator interface.
-// It will return an error if the Symbol, declared date or ex-date are zero-valued. It will not
+// It will return an error if the Symbol or ex-date are zero-valued. It will not
 // validate the emdedded dividend because required values - such as the amount - may be missing.
 func (u *UpcomingDividend) Validate() (err error) {
 	switch {
@@ -39,8 +39,6 @@ func (u *UpcomingDividend) Validate() (err error) {
 		err = fmt.Errorf("symbol is missing")
 	case u.ExDate.IsZero():
 		err = fmt.Errorf("ex date is missing")
-	case u.DeclaredDate.IsZero():
-		err = fmt.Errorf("declared date is missing")
 	}
 	return err
 }

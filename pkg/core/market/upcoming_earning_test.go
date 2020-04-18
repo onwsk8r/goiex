@@ -26,7 +26,7 @@ import (
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
-var _ = Describe("UpcomingEarning", func() {
+var _ = Describe("UpcomingEarning", func() { // nolint: dupl
 	var expected []UpcomingEarning
 	BeforeEach(func() {
 		expected = GoldenUpcomingEarnings()
