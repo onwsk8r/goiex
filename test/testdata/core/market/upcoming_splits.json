@@ -1,0 +1,29 @@
+[
+  {
+    "exDate": "2019-11-18",
+    "declaredDate": "2019-10-13",
+    "ratio": 0.5,
+    "toFactor": 2,
+    "fromFactor": 1,
+    "description": "l-S i-op2r1tf",
+    "symbol": "MBCN"
+  },
+  {
+    "exDate": "2019-12-19",
+    "declaredDate": "2019-10-18",
+    "ratio": 0.998591,
+    "toFactor": 22,
+    "fromFactor": 20,
+    "description": "il pr0f2S--1t2o",
+    "symbol": "CVLY"
+  },
+  {
+    "exDate": "2020-01-21",
+    "declaredDate": "2020-01-29",
+    "ratio": 10,
+    "toFactor": 1,
+    "fromFactor": 10,
+    "description": "p10t1o-firls -",
+    "symbol": "CRPYF"
+  }
+]
