@@ -23,3 +23,9 @@ func GoldenUpcomingDividends() (d []UpcomingDividend) {
 	helper.FromGolden("upcoming_dividends", &d)
 	return
 }
+
+// GoldenUpcomingEarnings returns golden data for the UpcomingEarning type
+func GoldenUpcomingEarnings() (e []UpcomingEarning) {
+	helper.FromGolden("upcoming_earnings", &e)
+	return
+}
