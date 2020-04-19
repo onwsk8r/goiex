@@ -23,7 +23,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "github.com/onwsk8r/goiex/pkg/core/market"
-	"github.com/onwsk8r/goiex/pkg/core/stock/fundamental"
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
@@ -62,45 +61,39 @@ var _ = XDescribe("UpcomingDividend Golden", func() {
 		Expect(err).ToNot(HaveOccurred())
 		golden := []UpcomingDividend{
 			UpcomingDividend{
-				Dividend: fundamental.Dividend{
-					Symbol:       "TUR",
-					ExDate:       time.Date(2020, time.June, 16, 0, 0, 0, 0, loc),
-					PaymentDate:  time.Date(2020, time.June, 26, 0, 0, 0, 0, loc),
-					RecordDate:   time.Date(2020, time.June, 16, 0, 0, 0, 0, loc),
-					DeclaredDate: time.Date(2019, time.December, 20, 0, 0, 0, 0, loc),
-					Amount:       0,
-					Flag:         "",
-					Currency:     "",
-					Description:  "krT SEeSCFu CB Trse hiTyMIa",
-					Frequency:    "",
-				},
+				Symbol:       "TUR",
+				ExDate:       time.Date(2020, time.June, 16, 0, 0, 0, 0, loc),
+				PaymentDate:  time.Date(2020, time.June, 26, 0, 0, 0, 0, loc),
+				RecordDate:   time.Date(2020, time.June, 16, 0, 0, 0, 0, loc),
+				DeclaredDate: time.Date(2019, time.December, 20, 0, 0, 0, 0, loc),
+				Amount:       0,
+				Flag:         "",
+				Currency:     "",
+				Description:  "krT SEeSCFu CB Trse hiTyMIa",
+				Frequency:    "",
 			},
 			UpcomingDividend{
-				Dividend: fundamental.Dividend{
-					Symbol:       "GFY",
-					ExDate:       time.Date(2020, time.February, 1, 0, 0, 0, 0, loc),
-					PaymentDate:  time.Date(2020, time.February, 8, 0, 0, 0, 0, loc),
-					RecordDate:   time.Date(2020, time.January, 26, 0, 0, 0, 0, loc),
-					DeclaredDate: time.Date(2019, time.November, 27, 0, 0, 0, 0, loc),
-					Amount:       0.0799,
-					Flag:         "aChs",
-					Currency:     "USD",
-					Description:  "anrSyrrO sdieha",
-					Frequency:    "holnytm",
-				},
+				Symbol:       "GFY",
+				ExDate:       time.Date(2020, time.February, 1, 0, 0, 0, 0, loc),
+				PaymentDate:  time.Date(2020, time.February, 8, 0, 0, 0, 0, loc),
+				RecordDate:   time.Date(2020, time.January, 26, 0, 0, 0, 0, loc),
+				DeclaredDate: time.Date(2019, time.November, 27, 0, 0, 0, 0, loc),
+				Amount:       0.0799,
+				Flag:         "aChs",
+				Currency:     "USD",
+				Description:  "anrSyrrO sdieha",
+				Frequency:    "holnytm",
 			},
 			UpcomingDividend{
-				Dividend: fundamental.Dividend{
-					Symbol:       "UACJF",
-					ExDate:       time.Date(2020, time.April, 2, 0, 0, 0, 0, loc),
-					RecordDate:   time.Date(2020, time.April, 15, 0, 0, 0, 0, loc),
-					DeclaredDate: time.Date(2019, time.May, 15, 0, 0, 0, 0, loc),
-					Amount:       62,
-					Flag:         "shaC",
-					Currency:     "JPY",
-					Description:  "eOrnrSsh adayri",
-					Frequency:    "nea-unsmail",
-				},
+				Symbol:       "UACJF",
+				ExDate:       time.Date(2020, time.April, 2, 0, 0, 0, 0, loc),
+				RecordDate:   time.Date(2020, time.April, 15, 0, 0, 0, 0, loc),
+				DeclaredDate: time.Date(2019, time.May, 15, 0, 0, 0, 0, loc),
+				Amount:       62,
+				Flag:         "shaC",
+				Currency:     "JPY",
+				Description:  "eOrnrSsh adayri",
+				Frequency:    "nea-unsmail",
 			},
 		}
 		helper.ToGolden("upcoming_dividends", golden)

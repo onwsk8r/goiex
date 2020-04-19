@@ -29,7 +29,6 @@ import (
 // Dividend represents a data point from the basic dividends endpoint.
 // https://iexcloud.io/docs/api/#dividends-basic
 type Dividend struct {
-	Symbol       string    `json:"symbol"`
 	ExDate       time.Time `json:"exDate"`
 	PaymentDate  time.Time `json:"paymentDate"`
 	RecordDate   time.Time `json:"recordDate"`
@@ -39,6 +38,7 @@ type Dividend struct {
 	Currency     string    `json:"currency"`
 	Description  string    `json:"description"`
 	Frequency    string    `json:"frequency"`
+	Date         time.Time `json:"date"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
@@ -54,25 +54,29 @@ func (d *Dividend) UnmarshalJSON(data []byte) (err error) {
 		PaymentDate  string `json:"paymentDate"`
 		RecordDate   string `json:"recordDate"`
 		DeclaredDate string `json:"declaredDate"`
+		Date         string `json:"date"`
 	}
 	tmp := new(embedded)
-	if err = json.Unmarshal(data, tmp); err == nil {
-		*d = Dividend(tmp.dividend)
-		// Ignore date parsing issues in case one or more dates are missing
-		d.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint: errcheck
-		d.PaymentDate, _ = time.Parse("2006-01-02", tmp.PaymentDate)   // nolint: errcheck
-		d.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint: errcheck
-		d.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
-		d.Amount, _ = strconv.ParseFloat(tmp.Amount, 64)               // nolint: errcheck
-		log.Debug().
-			Dict("ex_date", zerolog.Dict().Str("original", tmp.ExDate).Time("parsed", d.ExDate)).
-			Dict("payment_date", zerolog.Dict().Str("original", tmp.PaymentDate).Time("parsed", d.PaymentDate)).
-			Dict("record_date", zerolog.Dict().Str("original", tmp.RecordDate).Time("parsed", d.RecordDate)).
-			Dict("declared_date", zerolog.Dict().Str("original", tmp.DeclaredDate).Time("parsed", d.DeclaredDate)).
-			Dict("amount", zerolog.Dict().Str("original", tmp.Amount).Float64("parsed", d.Amount)).
-			Msg("dividend: parsed date")
+	if err := json.Unmarshal(data, tmp); err != nil {
+		return err
 	}
-	return
+	*d = Dividend(tmp.dividend)
+	// Ignore date parsing issues in case one or more dates are missing
+	d.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint: errcheck
+	d.PaymentDate, _ = time.Parse("2006-01-02", tmp.PaymentDate)   // nolint: errcheck
+	d.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint: errcheck
+	d.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
+	d.Date, _ = time.Parse("2006-01-02", tmp.Date)                 // nolint: errcheck
+	d.Amount, _ = strconv.ParseFloat(tmp.Amount, 64)               // nolint: errcheck
+	log.Debug().
+		Dict("ex_date", zerolog.Dict().Str("original", tmp.ExDate).Time("parsed", d.ExDate)).
+		Dict("payment_date", zerolog.Dict().Str("original", tmp.PaymentDate).Time("parsed", d.PaymentDate)).
+		Dict("record_date", zerolog.Dict().Str("original", tmp.RecordDate).Time("parsed", d.RecordDate)).
+		Dict("declared_date", zerolog.Dict().Str("original", tmp.DeclaredDate).Time("parsed", d.DeclaredDate)).
+		Dict("date", zerolog.Dict().Str("original", tmp.Date).Time("parsed", d.Date)).
+		Dict("amount", zerolog.Dict().Str("original", tmp.Amount).Float64("parsed", d.Amount)).
+		Msg("dividend: parsed date")
+	return nil
 }
 
 // Validate satisfies the Validator interface.

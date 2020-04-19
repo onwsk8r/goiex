@@ -18,8 +18,8 @@ package fundamental
 
 import "github.com/onwsk8r/goiex/test/helper"
 
-// GoldenDividend returns golden data for the Dividend type
-func GoldenDividend() (d Dividend) {
+// GoldenDividends returns golden data for the Dividend type
+func GoldenDividends() (d []Dividend) {
 	helper.FromGolden("dividend", &d)
 	return
 }
