@@ -81,8 +81,6 @@ func (i *Intraday) Validate() error {
 		return fmt.Errorf("missing date")
 	case i.MarketClose == 0:
 		return fmt.Errorf("market close is zero")
-	case i.Close == 0:
-		return fmt.Errorf("close is zero")
 	}
 	return nil
 }
