@@ -1,0 +1,18 @@
+[
+    {
+        "symbol": "AAPL",
+        "id": "AAPL20190621C00240000",
+        "expirationDate": "20190621",
+        "contractSize": 100,
+        "strikePrice": 240,
+        "closingPrice": 0.39,
+        "side": "call",
+        "type": "equity",
+        "volume": 884,
+        "openInterest": 12197,
+        "bid": 0.38,
+        "ask": 0.42,
+        "lastUpdated": "2019-04-25",
+        "isAdjusted": false
+    }
+]
