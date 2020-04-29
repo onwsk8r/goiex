@@ -70,8 +70,6 @@ func (e *Earning) Validate() error {
 	switch {
 	case e.ActualEPS == 0:
 		return fmt.Errorf("actual EPS is zero")
-	case e.ConsensusEPS == 0:
-		return fmt.Errorf("consensus EPS is zero")
 	case e.EPSReportDate.IsZero():
 		return fmt.Errorf("report date is missing")
 	}
