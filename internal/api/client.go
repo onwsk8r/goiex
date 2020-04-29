@@ -88,19 +88,13 @@ func NewClient(token, version string) (*Client, error) {
 // This method will log the token if trace logging is enabled.
 func (c *Client) Get(ctx context.Context, uri []string, params url.Values, f func(io.ReadCloser) error) error {
 	log.Debug().Strs("uri", uri).Interface("qsp", params).Msg("client: initiating GET request")
-	select {
-	case <-ctx.Done():
-		log.Debug().Msg("client: context is done prior to making request")
-		return ctx.Err()
-	case <-c.ticker.C:
-		log.Trace().Msg("client: ticker has ticked")
-	}
 
 	params.Add("token", c.token)
 	uri = append([]string{c.version}, uri...)
 	url := fmt.Sprintf("%s/%s?%s", c.domain, path.Join(uri...), params.Encode())
-	log.Trace().Str("url", url).Msg("client: performing GET request")
 
+	<-c.ticker.C
+	log.Trace().Str("url", url).Msg("client: performing GET request")
 	res, err := ctxhttp.Get(ctx, c.client, url)
 	if err != nil {
 		log.Debug().Msg("client: received error from ctxhttp")
