@@ -80,8 +80,6 @@ func (o *Option) Validate() error {
 		return fmt.Errorf("missing expiration date")
 	case o.StrikePrice == 0:
 		return fmt.Errorf("strike price is zero")
-	case o.ClosingPrice == 0:
-		return fmt.Errorf("closing price is zero")
 	}
 	return nil
 }

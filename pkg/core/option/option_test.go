@@ -66,10 +66,6 @@ var _ = Describe("Option", func() {
 			expected.StrikePrice = 0
 			Expect(expected.Validate()).To(MatchError("strike price is zero"))
 		})
-		It("should return an error if the ClosingPrice is zero", func() {
-			expected.ClosingPrice = 0
-			Expect(expected.Validate()).To(MatchError("closing price is zero"))
-		})
 	})
 })
 
