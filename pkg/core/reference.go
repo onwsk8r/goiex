@@ -49,3 +49,14 @@ func (r *Reference) Symbols(ctx context.Context) (symbols []reference.Symbol, er
 	})
 	return
 }
+
+// Symbols fetches a list of options symbols/dates that are supported for making API calls.
+// https://iexcloud.io/docs/api/#options-symbols
+func (r *Reference) OptionSymbols(ctx context.Context) (symbols reference.OptionSymbol, err error) {
+	uri := []string{"ref-data", "options", "symbols"}
+	log.Trace().Strs("uri", uri).Msg("reference: calling client")
+	err = r.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
+		return json.NewDecoder(r).Decode(&symbols)
+	})
+	return
+}

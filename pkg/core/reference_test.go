@@ -49,4 +49,17 @@ var _ = Describe("Reference", func() {
 			Expect(res).To(ConsistOf(reference.GoldenSymbol()))
 		})
 	})
+
+	Describe("OptionSymbols", func() {
+		BeforeEach(func() {
+			helper.TestdataResponder("/stable/ref-data/options/symbols", "core/reference/option_symbols.json")
+		})
+
+		It("should get all the option symbols", func() {
+			res, err := ref.OptionSymbols(context.Background())
+			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(res).To(BeEquivalentTo(reference.GoldenOptionSymbol()))
+		})
+	})
 })

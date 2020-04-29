@@ -44,4 +44,16 @@ var _ = Describe("Reference Integration", func() {
 			}
 		})
 	})
+
+	Describe("OptionSymbols", func() {
+		It("should get the option symbols", func() {
+			res, err := ref.OptionSymbols(context.Background())
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(res)).To(BeNumerically(">", 3000))
+
+			for _, val := range res {
+				Expect(len(val)).To(And(BeNumerically(">", 0), BeNumerically("<", 20)))
+			}
+		})
+	})
 })
