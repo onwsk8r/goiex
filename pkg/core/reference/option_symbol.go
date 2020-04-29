@@ -16,16 +16,5 @@
 
 package reference
 
-import "github.com/onwsk8r/goiex/test/helper"
-
-// GoldenSymbol returns golden data for the Symbol type
-func GoldenSymbol() (symbols []Symbol) {
-	helper.FromGolden("symbol", &symbols)
-	return
-}
-
-// GoldenOptionSymbol returns golden data for the OptionSymbol type
-func GoldenOptionSymbol() (symbols OptionSymbol) {
-	helper.FromGolden("option_symbol", &symbols)
-	return
-}
+// OptionSymbol represents one datum of that returned by the ref-data/options/symbols endpoint.
+type OptionSymbol map[string][]string
