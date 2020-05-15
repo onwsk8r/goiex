@@ -46,7 +46,7 @@ var _ = Describe("Fundamentals", func() {
 			res, err := f.Dividends(context.Background(), "twtr", "1y")
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			expected := fundamental.GoldenDividend()
+			expected := fundamental.GoldenDividends()
 			Expect(res).To(ConsistOf(expected))
 		})
 	})
