@@ -71,9 +71,10 @@ func (s *Price) HistoricalDaily(ctx context.Context, ticker string,
 
 // Intraday returns aggregated intraday prices in one minute buckets.
 // https://iexcloud.io/docs/api/#intraday-prices
-func (s *Price) Intraday(ctx context.Context, ticker string) (prices []price.Intraday, err error) {
+func (s *Price) Intraday(ctx context.Context, ticker string,
+	params *HistoricalPriceParams) (prices []price.Intraday, err error) {
 	uri := []string{s.path, ticker, "intraday-prices"}
-	err = s.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
+	err = s.client.Get(ctx, uri, params.Values(), func(r io.ReadCloser) error {
 		return json.NewDecoder(r).Decode(&prices)
 	})
 	return

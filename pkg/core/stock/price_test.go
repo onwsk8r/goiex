@@ -65,12 +65,15 @@ var _ = Describe("Price", func() {
 	})
 
 	Describe("Intraday", func() {
+		var params *HistoricalPriceParams
+
 		BeforeEach(func() {
+			params = new(HistoricalPriceParams)
 			helper.TestdataResponder("/stable/stock/twtr/intraday-prices", "core/stock/price/intraday.json")
 		})
 
 		It("should get all the prices", func() {
-			res, err := p.Intraday(context.Background(), "twtr")
+			res, err := p.Intraday(context.Background(), "twtr", params)
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
 
