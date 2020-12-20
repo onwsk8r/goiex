@@ -17,6 +17,7 @@
 package reference_test
 
 import (
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -28,7 +29,9 @@ var _ = Describe("OptionSymbol", func() {
 	var expected OptionSymbol
 
 	BeforeEach(func() {
-		expected = GoldenOptionSymbol()
+		expected = make(OptionSymbol)
+		expected["DAL"] = []string{"201904", "201905", "201906", "201909", "201912", "202001", "202101"}
+		expected["RUSS"] = []string{"201905", "201906", "201909", "201912"}
 	})
 
 	It("should parse symbols correctly", func() {
@@ -36,13 +39,12 @@ var _ = Describe("OptionSymbol", func() {
 		helper.TestdataFromJSON("core/reference/option_symbols.json", &symbols)
 		Expect(symbols).To(BeEquivalentTo(expected))
 	})
-})
 
-var _ = Describe("OptionSymbol Golden", func() {
-	It("should load the golden file", func() {
-		golden := OptionSymbol{}
-		golden["DAL"] = []string{"201904", "201905", "201906", "201909", "201912", "202001", "202101"}
-		golden["RUSS"] = []string{"201905", "201906", "201909", "201912"}
-		helper.ToGolden("option_symbol", golden)
+	It("should match the golden file", func() {
+		golden := GoldenOptionSymbol()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("option_symbol", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 })
