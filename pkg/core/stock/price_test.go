@@ -83,9 +83,7 @@ var _ = Describe("Price", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			expected := price.GoldenIntraday()
-			Expect(res[0].Date.Equal(expected.Date)).To(BeTrue(), "dates are inequal")
-			res[0].Date = expected.Date
-			Expect(res[0]).To(Equal(expected))
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 	})
 

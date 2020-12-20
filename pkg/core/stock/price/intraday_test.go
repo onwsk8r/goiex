@@ -19,6 +19,7 @@ package price_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -27,44 +28,10 @@ import (
 )
 
 var _ = Describe("Intraday", func() { // nolint: dupl
-	var expected Intraday
+	var expected []Intraday
 	BeforeEach(func() {
-		expected = GoldenIntraday()
-	})
-
-	It("should parse intraday prices correctly", func() {
-		var res []Intraday
-		helper.TestdataFromJSON("core/stock/price/intraday.json", &res)
-
-		// See https://github.com/golang/go/issues/10089#issuecomment-77463157 for why this is necessary
-		// My guess is because the "values pointed to" for the location are identical, but each time.Time
-		// contains a different pointer (ie living in a different memory address).
-		Expect(res[0].Date.Equal(expected.Date)).To(BeTrue(), "dates are inequal")
-		res[0].Date = expected.Date
-		Expect(res[0]).To(Equal(expected), "values are inequal")
-	})
-
-	Describe("Validate()", func() {
-		It("should succeed if the Intraday is valid", func() {
-			Expect(expected.Validate()).To(Succeed())
-		})
-		It("should return an error if the Date is zero valued", func() {
-			expected.Date = time.Time{}
-			Expect(expected.Validate()).To(MatchError("missing date"))
-		})
-		It("should return an error if the MarketClose is zero", func() {
-			expected.MarketClose = 0
-			Expect(expected.Validate()).To(MatchError("market close is zero"))
-		})
-	})
-})
-
-var _ = XDescribe("Intraday Golden", func() {
-	It("should load the golden file", func() {
-		easternTime, err := time.LoadLocation("America/New_York")
-		Expect(err).ToNot(HaveOccurred())
-		golden := Intraday{
-			Date:                 time.Date(2017, 12, 15, 9, 30, 0, 0, easternTime),
+		expected = []Intraday{{
+			Date:                 time.Date(2017, 12, 15, 14, 30, 0, 0, time.UTC),
 			Minute:               "09:30",
 			Label:                "09:30 AM",
 			MarketOpen:           143.98,
@@ -85,7 +52,34 @@ var _ = XDescribe("Intraday Golden", func() {
 			Notional:             441740.275,
 			NumberOfTrades:       20,
 			ChangeOverTime:       -0.0039,
+		}}
+	})
+
+	It("should parse intraday prices correctly", func() {
+		var res []Intraday
+		helper.TestdataFromJSON("core/stock/price/intraday.json", &res)
+		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenIntraday()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("intraday", expected)
+			Fail(cmp.Diff(golden, expected))
 		}
-		helper.ToGolden("intraday", golden)
+	})
+
+	Describe("Validate()", func() {
+		It("should succeed if the Intraday is valid", func() {
+			Expect(expected[0].Validate()).To(Succeed())
+		})
+		It("should return an error if the Date is zero valued", func() {
+			expected[0].Date = time.Time{}
+			Expect(expected[0].Validate()).To(MatchError("missing date"))
+		})
+		It("should return an error if the MarketClose is zero", func() {
+			expected[0].MarketClose = 0
+			Expect(expected[0].Validate()).To(MatchError("market close is zero"))
+		})
 	})
 })

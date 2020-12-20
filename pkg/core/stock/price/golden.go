@@ -31,7 +31,7 @@ func GoldenPreviousDay() (p PreviousDay) {
 }
 
 // GoldenIntraday returns golden data for the Intraday type
-func GoldenIntraday() (i Intraday) {
+func GoldenIntraday() (i []Intraday) {
 	helper.FromGolden("intraday", &i)
 	return
 }
