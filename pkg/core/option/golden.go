@@ -19,7 +19,7 @@ package option
 import "github.com/onwsk8r/goiex/test/helper"
 
 // GoldenOption returns golden data for the Option type
-func GoldenOption() (o Option) {
+func GoldenOption() (o []Option) {
 	helper.FromGolden("option", &o)
 	return
 }
