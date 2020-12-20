@@ -21,6 +21,7 @@ package stock_test
 import (
 	"context"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -50,7 +51,9 @@ var _ = Describe("Price", func() {
 			res, err := p.HistoricalDaily(context.Background(), "twtr", params)
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(ConsistOf(price.GoldenHistorical()))
+
+			expected := price.GoldenHistorical()
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 
 		It("should work with a dynamic range", func() {
@@ -60,7 +63,9 @@ var _ = Describe("Price", func() {
 			res, err := p.HistoricalDaily(context.Background(), "twtr", params)
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(ConsistOf(price.GoldenHistorical()))
+
+			expected := price.GoldenHistorical()
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 	})
 
@@ -93,7 +98,9 @@ var _ = Describe("Price", func() {
 			res, err := p.PreviousDay(context.Background(), "twtr")
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(Equal(price.GoldenPreviousDay()))
+
+			expected := price.GoldenPreviousDay()
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 	})
 
@@ -106,7 +113,9 @@ var _ = Describe("Price", func() {
 			res, err := p.PreviousDayMarket(context.Background())
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(ConsistOf(price.GoldenPreviousDay()))
+
+			expected := price.GoldenPreviousDay()
+			Expect(cmp.Equal(expected, res[0])).To(BeTrue(), cmp.Diff(expected, res[0]))
 		})
 	})
 })

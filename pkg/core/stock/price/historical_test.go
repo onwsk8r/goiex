@@ -19,6 +19,7 @@ package price_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -27,57 +28,66 @@ import (
 )
 
 var _ = Describe("Historical", func() { // nolint: dupl
-	var expected Historical
+	var expected []Historical
 	BeforeEach(func() {
-		expected = GoldenHistorical()
+		expected = []Historical{{
+			Close:   116.59,
+			High:    117.49,
+			Low:     116.22,
+			Open:    116.57,
+			Symbol:  "AAPL",
+			Volume:  46691331,
+			ID:      "HISTORICAL_PRICES",
+			Key:     "AAPL",
+			Date:    time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
+			Updated: time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
+			UOpen:   116.57,
+			UHigh:   117.49,
+			ULow:    116.22,
+			UClose:  116.59,
+			UVolume: 46691331,
+			FOpen:   116.57,
+			FHigh:   117.49,
+			FLow:    116.22,
+			FClose:  116.59,
+			FVolume: 46691331,
+			Label:   "Nov 27, 20",
+		}}
 	})
 
 	It("should parse historical prices correctly", func() {
 		var res []Historical
 		helper.TestdataFromJSON("core/stock/price/historical.json", &res)
-		Expect(res[0]).To(Equal(expected))
+		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenHistorical()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("historical", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 
 	Describe("Validate()", func() {
 		It("should succeed if the Historical is valid", func() {
-			Expect(expected.Validate()).To(Succeed())
+			Expect(expected[0].Validate()).To(Succeed())
 		})
 		It("should return an error if the Date is zero valued", func() {
-			expected.Date = time.Time{}
-			Expect(expected.Validate()).To(MatchError("missing date"))
+			expected[0].Date = time.Time{}
+			Expect(expected[0].Validate()).To(MatchError("missing date"))
 		})
 		It("should return an error if the Close is zero", func() {
-			expected.Close = 0
-			Expect(expected.Validate()).To(MatchError("close is zero"))
+			expected[0].Close = 0
+			Expect(expected[0].Validate()).To(MatchError("close is zero"))
 		})
 		It("should return an error if the UClose is zero", func() {
-			expected.UClose = 0
-			Expect(expected.Validate()).To(MatchError("unadjusted close is zero"))
+			expected[0].UClose = 0
+			Expect(expected[0].Validate()).To(MatchError("unadjusted close is zero"))
 		})
-	})
-})
-
-var _ = XDescribe("Historical Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := Historical{
-			Date:           time.Date(2017, time.April, 3, 0, 0, 0, 0, loc),
-			Open:           143.1192,
-			High:           143.5275,
-			Low:            142.4619,
-			Close:          143.1092,
-			Volume:         19985714,
-			UOpen:          143.1192,
-			UHigh:          143.5275,
-			ULow:           142.4619,
-			UClose:         143.1092,
-			UVolume:        19985714,
-			Change:         0.039835,
-			ChangePercent:  0.028,
-			Label:          "Apr 03, 17",
-			ChangeOverTime: -0.0039,
-		}
-		helper.ToGolden("historical", golden)
+		It("should return an error if the Symbol is empty", func() {
+			expected[0].Symbol = ""
+			Expect(expected[0].Validate()).To(MatchError("missing symbol"))
+		})
 	})
 })
