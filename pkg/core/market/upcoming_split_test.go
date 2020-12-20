@@ -16,8 +16,8 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 	var expected []UpcomingSplit
 	BeforeEach(func() {
 		expected = []UpcomingSplit{{
-			Symbol: "MBCN",
 			Split: fundamental.Split{
+				Symbol:       "MBCN",
 				ExDate:       time.Date(2019, time.November, 18, 0, 0, 0, 0, time.UTC),
 				DeclaredDate: time.Date(2019, time.October, 13, 0, 0, 0, 0, time.UTC),
 				Ratio:        0.5,
@@ -25,8 +25,8 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 				FromFactor:   1,
 				Description:  "l-S i-op2r1tf",
 			}}, {
-			Symbol: "CVLY",
 			Split: fundamental.Split{
+				Symbol:       "CVLY",
 				ExDate:       time.Date(2019, time.December, 19, 0, 0, 0, 0, time.UTC),
 				DeclaredDate: time.Date(2019, time.October, 18, 0, 0, 0, 0, time.UTC),
 				Ratio:        0.998591,
@@ -34,8 +34,8 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 				FromFactor:   20,
 				Description:  "il pr0f2S--1t2o",
 			}}, {
-			Symbol: "CRPYF",
 			Split: fundamental.Split{
+				Symbol:       "CRPYF",
 				ExDate:       time.Date(2020, time.January, 21, 0, 0, 0, 0, time.UTC),
 				DeclaredDate: time.Date(2020, time.January, 29, 0, 0, 0, 0, time.UTC),
 				Ratio:        10,
@@ -48,7 +48,7 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 	It("should parse upcoming splits correctly", func() {
 		var res []UpcomingSplit
 		helper.TestdataFromJSON("core/market/upcoming_splits.json", &res)
-		Expect(res).To(ConsistOf(expected))
+		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 	})
 
 	It("should have a current golden file", func() {

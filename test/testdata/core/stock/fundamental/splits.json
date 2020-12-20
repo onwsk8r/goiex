@@ -1,10 +1,16 @@
 [
     {
-        "exDate": "2017-08-10",
         "declaredDate": "2017-08-01",
-        "ratio": 0.142857,
-        "toFactor": 7,
+        "description": "7-for-1 split",
+        "exDate": "2017-08-10",
         "fromFactor": 1,
-        "description": "7-for-1 split"
+        "ratio": 0.142857,
+        "refid": 6910760,
+        "symbol": "AAPL",
+        "toFactor": 7,
+        "id": "SPLITS",
+        "key": "AAPL",
+        "subkey": "6846210",
+        "updated": 1609576419432
     }
 ]
