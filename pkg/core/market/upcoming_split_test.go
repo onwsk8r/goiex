@@ -3,6 +3,7 @@ package market_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -14,13 +15,47 @@ import (
 var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 	var expected []UpcomingSplit
 	BeforeEach(func() {
-		expected = GoldenUpcomingSplits()
+		expected = []UpcomingSplit{{
+			Symbol: "MBCN",
+			Split: fundamental.Split{
+				ExDate:       time.Date(2019, time.November, 18, 0, 0, 0, 0, time.UTC),
+				DeclaredDate: time.Date(2019, time.October, 13, 0, 0, 0, 0, time.UTC),
+				Ratio:        0.5,
+				ToFactor:     2,
+				FromFactor:   1,
+				Description:  "l-S i-op2r1tf",
+			}}, {
+			Symbol: "CVLY",
+			Split: fundamental.Split{
+				ExDate:       time.Date(2019, time.December, 19, 0, 0, 0, 0, time.UTC),
+				DeclaredDate: time.Date(2019, time.October, 18, 0, 0, 0, 0, time.UTC),
+				Ratio:        0.998591,
+				ToFactor:     22,
+				FromFactor:   20,
+				Description:  "il pr0f2S--1t2o",
+			}}, {
+			Symbol: "CRPYF",
+			Split: fundamental.Split{
+				ExDate:       time.Date(2020, time.January, 21, 0, 0, 0, 0, time.UTC),
+				DeclaredDate: time.Date(2020, time.January, 29, 0, 0, 0, 0, time.UTC),
+				Ratio:        10,
+				ToFactor:     1,
+				FromFactor:   10,
+				Description:  "p10t1o-firls -",
+			}}}
 	})
 
 	It("should parse upcoming splits correctly", func() {
 		var res []UpcomingSplit
 		helper.TestdataFromJSON("core/market/upcoming_splits.json", &res)
 		Expect(res).To(ConsistOf(expected))
+	})
+
+	It("should have a current golden file", func() {
+		if !cmp.Equal(expected, GoldenUpcomingSplits()) {
+			helper.ToGolden("upcoming_splits", expected)
+			Fail(cmp.Diff(expected, GoldenUpcomingSplits()))
+		}
 	})
 
 	Describe("Validate()", func() {
@@ -41,48 +76,5 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 			expected[0].ExDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("ex date is missing"))
 		})
-	})
-})
-
-var _ = XDescribe("UpcomingSplit Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := []UpcomingSplit{
-			UpcomingSplit{
-				Symbol: "MBCN",
-				Split: fundamental.Split{
-					ExDate:       time.Date(2019, time.November, 18, 0, 0, 0, 0, loc),
-					DeclaredDate: time.Date(2019, time.October, 13, 0, 0, 0, 0, loc),
-					Ratio:        0.5,
-					ToFactor:     2,
-					FromFactor:   1,
-					Description:  "l-S i-op2r1tf",
-				},
-			},
-			UpcomingSplit{
-				Symbol: "CVLY",
-				Split: fundamental.Split{
-					ExDate:       time.Date(2019, time.December, 19, 0, 0, 0, 0, loc),
-					DeclaredDate: time.Date(2019, time.October, 18, 0, 0, 0, 0, loc),
-					Ratio:        0.998591,
-					ToFactor:     22,
-					FromFactor:   20,
-					Description:  "il pr0f2S--1t2o",
-				},
-			},
-			UpcomingSplit{
-				Symbol: "CRPYF",
-				Split: fundamental.Split{
-					ExDate:       time.Date(2020, time.January, 21, 0, 0, 0, 0, loc),
-					DeclaredDate: time.Date(2020, time.January, 29, 0, 0, 0, 0, loc),
-					Ratio:        10,
-					ToFactor:     1,
-					FromFactor:   10,
-					Description:  "p10t1o-firls -",
-				},
-			},
-		}
-		helper.ToGolden("upcoming_splits", golden)
 	})
 })
