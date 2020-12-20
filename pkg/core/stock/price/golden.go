@@ -19,7 +19,7 @@ package price
 import "github.com/onwsk8r/goiex/test/helper"
 
 // GoldenHistorical returns golden data for the Historical type
-func GoldenHistorical() (h Historical) {
+func GoldenHistorical() (h []Historical) {
 	helper.FromGolden("historical", &h)
 	return
 }

@@ -19,6 +19,7 @@ package price_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -29,13 +30,43 @@ import (
 var _ = Describe("PreviousDay", func() {
 	var expected PreviousDay
 	BeforeEach(func() {
-		expected = GoldenPreviousDay()
+		expected = PreviousDay{Historical{
+			Close:   116.59,
+			High:    117.49,
+			Low:     116.22,
+			Open:    116.57,
+			Symbol:  "AAPL",
+			Volume:  46691331,
+			ID:      "HISTORICAL_PRICES",
+			Key:     "AAPL",
+			Date:    time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
+			Updated: time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
+			UOpen:   116.57,
+			UHigh:   117.49,
+			ULow:    116.22,
+			UClose:  116.59,
+			UVolume: 46691331,
+			FOpen:   116.57,
+			FHigh:   117.49,
+			FLow:    116.22,
+			FClose:  116.59,
+			FVolume: 46691331,
+			Label:   "Nov 27, 20",
+		}}
 	})
 
 	It("should parse previous day prices correctly", func() {
 		var res PreviousDay
 		helper.TestdataFromJSON("core/stock/price/previous_day.json", &res)
-		Expect(res).To(Equal(expected))
+		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenPreviousDay()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("previous_day", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 
 	Describe("Validate()", func() {
@@ -50,33 +81,5 @@ var _ = Describe("PreviousDay", func() {
 			expected.Date = time.Time{}
 			Expect(expected.Validate()).ToNot(Succeed())
 		})
-	})
-})
-
-var _ = XDescribe("PreviousDay Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := PreviousDay{
-			Symbol: "AAPL",
-			Historical: Historical{
-				Date:           time.Date(2017, time.April, 3, 0, 0, 0, 0, loc),
-				Open:           143.1192,
-				High:           143.5275,
-				Low:            142.4619,
-				Close:          143.1092,
-				Volume:         19985714,
-				UOpen:          143.1192,
-				UHigh:          143.5275,
-				ULow:           142.4619,
-				UClose:         143.1092,
-				UVolume:        19985714,
-				Change:         0.039835,
-				ChangePercent:  0.028,
-				Label:          "Apr 03, 17",
-				ChangeOverTime: -0.0039,
-			},
-		}
-		helper.ToGolden("previous_day", golden)
 	})
 })

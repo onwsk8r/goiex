@@ -27,21 +27,33 @@ import (
 // Historical represents a data point from the Historical Prices endpoint.
 // https://iexcloud.io/docs/api/#historical-prices
 type Historical struct {
-	Date           time.Time `json:"date"`
-	Open           float64   `json:"open"`
-	High           float64   `json:"high"`
-	Low            float64   `json:"low"`
-	Close          float64   `json:"close"`
-	Volume         float64   `json:"volume"`
-	UOpen          float64   `json:"uOpen"`
-	UHigh          float64   `json:"uHigh"`
-	ULow           float64   `json:"uLow"`
-	UClose         float64   `json:"uClose"`
-	UVolume        int       `json:"uVolume"`
-	Change         float64   `json:"change"`
-	ChangePercent  float64   `json:"changePercent"`
-	Label          string    `json:"label"`
-	ChangeOverTime float64   `json:"changeOverTime"`
+	Close                float64   `json:"close,omitempty"`
+	High                 float64   `json:"high,omitempty"`
+	Low                  float64   `json:"low,omitempty"`
+	Open                 float64   `json:"open,omitempty"`
+	Symbol               string    `json:"symbol,omitempty"`
+	Volume               float64   `json:"volume,omitempty"`
+	ID                   string    `json:"id,omitempty"`
+	Source               string    `json:"source,omitempty"`
+	Key                  string    `json:"key,omitempty"`
+	Subkey               string    `json:"subkey,omitempty"`
+	Date                 time.Time `json:"date,omitempty"`
+	Updated              time.Time `json:"updated,omitempty"`
+	ChangeOverTime       float64   `json:"changeOverTime,omitempty"`
+	MarketChangeOverTime float64   `json:"marketChangeOverTime,omitempty"`
+	UOpen                float64   `json:"uOpen,omitempty"`
+	UHigh                float64   `json:"uHigh,omitempty"`
+	ULow                 float64   `json:"uLow,omitempty"`
+	UClose               float64   `json:"uClose,omitempty"`
+	UVolume              uint      `json:"uVolume,omitempty"`
+	FOpen                float64   `json:"fOpen,omitempty"`
+	FHigh                float64   `json:"fHigh,omitempty"`
+	FLow                 float64   `json:"fLow,omitempty"`
+	FClose               float64   `json:"fClose,omitempty"`
+	FVolume              float64   `json:"fVolume,omitempty"`
+	Label                string    `json:"label,omitempty"`
+	Change               float64   `json:"change,omitempty"`
+	ChangePercent        float64   `json:"changePercent,omitempty"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
@@ -52,15 +64,17 @@ func (h *Historical) UnmarshalJSON(data []byte) (err error) {
 	type historical Historical
 	type embedded struct {
 		historical
-		Date string `json:"date"`
+		Date    int64 `json:"date,omitempty"`
+		Updated int64 `json:"updated,omitempty"`
 	}
 	tmp := new(embedded)
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*h = Historical(tmp.historical)
 		// Ignore date parsing issues, which will happen especially on PreviousDayMarket
 		// calls where some array objects may be empty (ie "{}")
-		h.Date, _ = time.Parse("2006-01-02", tmp.Date) // nolint: errcheck
-		log.Debug().Str("original", tmp.Date).Time("parsed", h.Date).Msg("historical: parsed date")
+		h.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)          // nolint:gomnd
+		h.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6) // nolint:gomnd
+		log.Debug().Interface("original", tmp).Interface("final", h).Msg("historical: parsed date")
 	}
 	return
 }
@@ -69,6 +83,8 @@ func (h *Historical) UnmarshalJSON(data []byte) (err error) {
 // It will return an error if the Date, Close or UClose fields are equal to their zero value.
 func (h *Historical) Validate() error {
 	switch {
+	case h.Symbol == "":
+		return fmt.Errorf("missing symbol")
 	case h.Date.IsZero():
 		return fmt.Errorf("missing date")
 	case h.Close == 0:
