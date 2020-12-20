@@ -1,14 +1,14 @@
 [
-  {
-    "symbol": "RESN",
-    "reportDate": "2020-03-08"
-  },
-  {
-    "symbol": "KHOLY",
-    "reportDate": "2020-02-21"
-  },
-  {
-    "symbol": "SWM",
-    "reportDate": "2020-03-01"
-  }
+    {
+        "symbol": "RESN",
+        "reportDate": "2020-03-08"
+    },
+    {
+        "symbol": "KHOLY",
+        "reportDate": "2020-02-21"
+    },
+    {
+        "symbol": "SWM",
+        "reportDate": "2020-03-01"
+    }
 ]

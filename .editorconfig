@@ -9,7 +9,7 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[{*.go,Makefile,**.mk,go.mod}]
+[{*.go,Makefile,*.mk,go.mod}]
 indent_style = tab
 
 [*.yml]
