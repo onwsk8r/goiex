@@ -1,50 +1,20 @@
 [
     {
-        "exDate": "2020-01-30",
-        "paymentDate": "2020-02-08",
-        "recordDate": "2020-01-24",
-        "declaredDate": "2020-01-10",
-        "amount": "0.41",
-        "flag": "Chas",
+        "amount": 0.70919585493507512,
         "currency": "USD",
-        "description": "Uitn",
-        "frequency": "uyarrleqt",
-        "date": "2020-04-19"
-    },
-    {
-        "exDate": "2019-10-27",
-        "paymentDate": "2019-11-13",
-        "recordDate": "2019-11-02",
-        "declaredDate": "2019-10-16",
-        "amount": "0.39",
-        "flag": "Csha",
-        "currency": "USD",
-        "description": "Unti",
-        "frequency": "rqeyltaur",
-        "date": "2020-04-19"
-    },
-    {
-        "exDate": "2019-08-06",
-        "paymentDate": "2019-08-11",
-        "recordDate": "2019-07-26",
-        "declaredDate": "2019-07-17",
-        "amount": "0.4",
-        "flag": "aCsh",
-        "currency": "USD",
-        "description": "iUtn",
-        "frequency": "raqletyru",
-        "date": "2020-04-19"
-    },
-    {
-        "exDate": "2019-04-29",
-        "paymentDate": "2019-04-30",
-        "recordDate": "2019-04-23",
-        "declaredDate": "2019-04-13",
-        "amount": "0.41",
-        "flag": "hCas",
-        "currency": "USD",
-        "description": "Uint",
-        "frequency": "qrauetryl",
-        "date": "2020-04-19"
+        "declaredDate": "2020-10-19",
+        "description": "Ordinary Shares",
+        "exDate": "2020-10-28",
+        "flag": "Cash",
+        "frequency": "quarterly",
+        "paymentDate": "2020-11-06",
+        "recordDate": "2020-10-28",
+        "refid": 2096218,
+        "symbol": "AAPL",
+        "id": "DIVIDENDS",
+        "key": "AAPL",
+        "subkey": "2053393",
+        "date": 1612392166191,
+        "updated": 1612392166191
     }
 ]

@@ -19,26 +19,32 @@ package fundamental
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 // Dividend represents a data point from the basic dividends endpoint.
+// Note the refid field exists in the sample data but not in the schema docs.
 // https://iexcloud.io/docs/api/#dividends-basic
 type Dividend struct {
-	ExDate       time.Time `json:"exDate"`
-	PaymentDate  time.Time `json:"paymentDate"`
-	RecordDate   time.Time `json:"recordDate"`
-	DeclaredDate time.Time `json:"declaredDate"`
-	Amount       float64   `json:"amount"`
-	Flag         string    `json:"flag"`
-	Currency     string    `json:"currency"`
-	Description  string    `json:"description"`
-	Frequency    string    `json:"frequency"`
-	Date         time.Time `json:"date"`
+	Amount       float64   `json:"amount,omitempty"`
+	Currency     string    `json:"currency,omitempty"`
+	DeclaredDate time.Time `json:"declaredDate,omitempty"`
+	Description  string    `json:"description,omitempty"`
+	ExDate       time.Time `json:"exDate,omitempty"`
+	Flag         string    `json:"flag,omitempty"`
+	Frequency    string    `json:"frequency,omitempty"`
+	PaymentDate  time.Time `json:"paymentDate,omitempty"`
+	RecordDate   time.Time `json:"recordDate,omitempty"`
+	RefID        float64   `json:"refid,omitempty"`
+	Symbol       string    `json:"symbol,omitempty"`
+	ID           string    `json:"id,omitempty"`
+	Source       string    `json:"source,omitempty"`
+	Key          string    `json:"key,omitempty"`
+	Subkey       string    `json:"subkey,omitempty"`
+	Date         time.Time `json:"date,omitempty"`
+	Updated      time.Time `json:"updated,omitempty"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
@@ -49,12 +55,12 @@ func (d *Dividend) UnmarshalJSON(data []byte) (err error) {
 	type dividend Dividend
 	type embedded struct {
 		dividend
-		Amount       string `json:"amount"`
-		ExDate       string `json:"exDate"`
-		PaymentDate  string `json:"paymentDate"`
-		RecordDate   string `json:"recordDate"`
-		DeclaredDate string `json:"declaredDate"`
-		Date         string `json:"date"`
+		DeclaredDate string `json:"declaredDate,omitempty"`
+		ExDate       string `json:"exDate,omitempty"`
+		PaymentDate  string `json:"paymentDate,omitempty"`
+		RecordDate   string `json:"recordDate,omitempty"`
+		Date         int64  `json:"date,omitempty"`
+		Updated      int64  `json:"updated,omitempty"`
 	}
 	tmp := new(embedded)
 	if err := json.Unmarshal(data, tmp); err != nil {
@@ -62,20 +68,13 @@ func (d *Dividend) UnmarshalJSON(data []byte) (err error) {
 	}
 	*d = Dividend(tmp.dividend)
 	// Ignore date parsing issues in case one or more dates are missing
+	d.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
 	d.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint: errcheck
 	d.PaymentDate, _ = time.Parse("2006-01-02", tmp.PaymentDate)   // nolint: errcheck
 	d.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint: errcheck
-	d.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
-	d.Date, _ = time.Parse("2006-01-02", tmp.Date)                 // nolint: errcheck
-	d.Amount, _ = strconv.ParseFloat(tmp.Amount, 64)               // nolint: errcheck
-	log.Debug().
-		Dict("ex_date", zerolog.Dict().Str("original", tmp.ExDate).Time("parsed", d.ExDate)).
-		Dict("payment_date", zerolog.Dict().Str("original", tmp.PaymentDate).Time("parsed", d.PaymentDate)).
-		Dict("record_date", zerolog.Dict().Str("original", tmp.RecordDate).Time("parsed", d.RecordDate)).
-		Dict("declared_date", zerolog.Dict().Str("original", tmp.DeclaredDate).Time("parsed", d.DeclaredDate)).
-		Dict("date", zerolog.Dict().Str("original", tmp.Date).Time("parsed", d.Date)).
-		Dict("amount", zerolog.Dict().Str("original", tmp.Amount).Float64("parsed", d.Amount)).
-		Msg("dividend: parsed date")
+	d.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)           // nolint:gomnd
+	d.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)  // nolint:gomnd
+	log.Debug().Interface("original", tmp).Interface("final", d).Msg("dividend: parsed date")
 	return nil
 }
 
