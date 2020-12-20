@@ -26,12 +26,10 @@ import (
 )
 
 var _ = BeforeSuite(func() {
-	httpmock.Activate()
-
 	var err error
 	client, err = api.NewClient("pk_sometoken", "")
 	Expect(err).ToNot(HaveOccurred())
 })
 
-var _ = AfterEach(httpmock.Reset)
-var _ = AfterSuite(httpmock.Deactivate)
+var _ = BeforeEach(httpmock.Activate)
+var _ = AfterEach(httpmock.DeactivateAndReset)
