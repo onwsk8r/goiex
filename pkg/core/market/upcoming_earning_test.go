@@ -19,6 +19,7 @@ package market_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -29,13 +30,29 @@ import (
 var _ = Describe("UpcomingEarning", func() { // nolint: dupl
 	var expected []UpcomingEarning
 	BeforeEach(func() {
-		expected = GoldenUpcomingEarnings()
+		expected = []UpcomingEarning{{
+			Symbol:     "RESN",
+			ReportDate: time.Date(2020, time.March, 8, 0, 0, 0, 0, time.UTC),
+		}, {
+			Symbol:     "KHOLY",
+			ReportDate: time.Date(2020, time.February, 21, 0, 0, 0, 0, time.UTC),
+		}, {
+			Symbol:     "SWM",
+			ReportDate: time.Date(2020, time.March, 1, 0, 0, 0, 0, time.UTC),
+		}}
 	})
 
 	It("should parse upcoming earnings correctly", func() {
 		var res []UpcomingEarning
 		helper.TestdataFromJSON("core/market/upcoming_earnings.json", &res)
 		Expect(res).To(ConsistOf(expected))
+	})
+
+	It("should have a current golden file", func() {
+		if !cmp.Equal(expected, GoldenUpcomingEarnings()) {
+			helper.ToGolden("upcoming_earnings", expected)
+			Fail(cmp.Diff(expected, GoldenUpcomingEarnings()))
+		}
 	})
 
 	Describe("Validate()", func() {
@@ -52,27 +69,5 @@ var _ = Describe("UpcomingEarning", func() { // nolint: dupl
 			expected[0].ReportDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("report date is missing"))
 		})
-	})
-})
-
-var _ = XDescribe("UpcomingEarning Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := []UpcomingEarning{
-			UpcomingEarning{
-				Symbol:     "RESN",
-				ReportDate: time.Date(2020, time.March, 8, 0, 0, 0, 0, loc),
-			},
-			UpcomingEarning{
-				Symbol:     "KHOLY",
-				ReportDate: time.Date(2020, time.February, 21, 0, 0, 0, 0, loc),
-			},
-			UpcomingEarning{
-				Symbol:     "SWM",
-				ReportDate: time.Date(2020, time.March, 1, 0, 0, 0, 0, loc),
-			},
-		}
-		helper.ToGolden("upcoming_earnings", golden)
 	})
 })
