@@ -56,7 +56,7 @@ var _ = Describe("Earning", func() {
 	})
 })
 
-var _ = XDescribe("Earning Golden", func() {
+var _ = Describe("Earning Golden", func() {
 	It("should load the golden file", func() {
 		loc, err := time.LoadLocation("UTC")
 		Expect(err).ToNot(HaveOccurred())
