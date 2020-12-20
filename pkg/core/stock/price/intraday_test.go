@@ -52,10 +52,6 @@ var _ = Describe("Intraday", func() { // nolint: dupl
 			expected.Date = time.Time{}
 			Expect(expected.Validate()).To(MatchError("missing date"))
 		})
-		It("should return an error if the Close is zero", func() {
-			expected.Close = 0
-			Expect(expected.Validate()).To(MatchError("close is zero"))
-		})
 		It("should return an error if the MarketClose is zero", func() {
 			expected.MarketClose = 0
 			Expect(expected.Validate()).To(MatchError("market close is zero"))
