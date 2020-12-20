@@ -49,10 +49,6 @@ var _ = Describe("Earning", func() {
 			expected[0].ActualEPS = 0
 			Expect(expected[0].Validate()).To(MatchError("actual EPS is zero"))
 		})
-		It("should return an error if the ConsensusEPS is zero valued", func() {
-			expected[0].ConsensusEPS = 0
-			Expect(expected[0].Validate()).To(MatchError("consensus EPS is zero"))
-		})
 		It("should return an error if the ReportDate is zero valued", func() {
 			expected[0].EPSReportDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("report date is missing"))

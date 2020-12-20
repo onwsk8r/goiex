@@ -12,7 +12,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.33
-          only-new-issues: true
+          only-new-issues: false
   super-lint:
     name: Lint non-Golang files
     runs-on: ubuntu-latest
@@ -23,4 +23,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_GO: false
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
