@@ -19,6 +19,7 @@ package fundamental_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -29,7 +30,27 @@ import (
 var _ = Describe("Earning", func() {
 	var expected []Earning
 	BeforeEach(func() {
-		expected = GoldenEarnings()
+		expected = []Earning{{
+			EPSReportDate:            time.Date(2020, time.October, 22, 0, 0, 0, 0, time.UTC),
+			EPSSurpriseDollar:        0.330098697767743855,
+			EPSSurpriseDollarPercent: 0.1440300992341432,
+			ActualEPS:                5.07,
+			AnnounceTime:             "AMC",
+			ConsensusEPS:             2.703327,
+			Currency:                 "USD",
+			FiscalEndDate:            time.Date(2020, time.September, 18, 0, 0, 0, 0, time.UTC),
+			FiscalPeriod:             "Q4 2020",
+			NumberOfEstimates:        31,
+			PeriodType:               "quarterly",
+			Symbol:                   "AAPL",
+			YearAgo:                  4.7006,
+			YearAgoChangePercent:     -0.7303425659240847,
+			ID:                       "PREMIUM_EARNINGS",
+			Key:                      "AAPL",
+			Subkey:                   "Q42020",
+			Date:                     time.Date(2020, time.November, 25, 13, 48, 45, 71*1e6, time.UTC),
+			Updated:                  time.Date(2020, time.November, 25, 13, 48, 45, 71*1e6, time.UTC),
+		}}
 	})
 
 	It("should parse earnings correctly", func() {
@@ -38,7 +59,15 @@ var _ = Describe("Earning", func() {
 			Earnings []Earning `json:"earnings"`
 		}{}
 		helper.TestdataFromJSON("core/stock/fundamental/earnings.json", &res)
-		Expect(res.Earnings).To(ConsistOf(expected))
+		Expect(cmp.Equal(expected, res.Earnings)).To(BeTrue(), cmp.Diff(expected, res.Earnings))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenEarnings()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("earning", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 
 	Describe("Validate()", func() {
@@ -53,39 +82,5 @@ var _ = Describe("Earning", func() {
 			expected[0].EPSReportDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("report date is missing"))
 		})
-	})
-})
-
-var _ = Describe("Earning Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := []Earning{
-			Earning{
-				ActualEPS:            2.46,
-				ConsensusEPS:         2.36,
-				AnnounceTime:         "AMC",
-				NumberOfEstimates:    34,
-				EPSSurpriseDollar:    0.1,
-				EPSReportDate:        time.Date(2019, time.April, 30, 0, 0, 0, 0, loc),
-				FiscalPeriod:         "Q1 2019",
-				FiscalEndDate:        time.Date(2019, time.March, 31, 0, 0, 0, 0, loc),
-				YearAgo:              2.73,
-				YearAgoChangePercent: -0.0989,
-			},
-			Earning{
-				ActualEPS:            4.18,
-				ConsensusEPS:         4.17,
-				AnnounceTime:         "AMC",
-				NumberOfEstimates:    35,
-				EPSSurpriseDollar:    0.01,
-				EPSReportDate:        time.Date(2019, time.January, 29, 0, 0, 0, 0, loc),
-				FiscalPeriod:         "Q4 2018",
-				FiscalEndDate:        time.Date(2018, time.December, 31, 0, 0, 0, 0, loc),
-				YearAgo:              3.89,
-				YearAgoChangePercent: 0.0746,
-			},
-		}
-		helper.ToGolden("earning", golden)
 	})
 })

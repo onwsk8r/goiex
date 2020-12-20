@@ -61,7 +61,8 @@ var _ = Describe("Fundamentals", func() {
 			res, err := f.Earnings(context.Background(), "twtr", 2, false)
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(Equal(fundamental.GoldenEarnings()))
+			expected := fundamental.GoldenEarnings()
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 	})
 
