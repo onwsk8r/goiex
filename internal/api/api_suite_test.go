@@ -29,6 +29,5 @@ func TestApi(t *testing.T) {
 	RunSpecs(t, "Api Suite")
 }
 
-var _ = BeforeSuite(httpmock.Activate)
-var _ = AfterEach(httpmock.Reset)
-var _ = AfterSuite(httpmock.DeactivateAndReset)
+var _ = BeforeEach(httpmock.Activate)
+var _ = AfterEach(httpmock.DeactivateAndReset)
