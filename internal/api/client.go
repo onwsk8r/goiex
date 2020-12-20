@@ -83,19 +83,19 @@ func NewClient(token, version string) (*Client, error) {
 // Get fulfills the iexcloud.Client interface.
 // This method waits for either rate limiting or context.Done() before doing
 // any work. The client's token is added to the query string parameters automatically,
-// and the response body is automatically closed. If a non-200 repsonse status is received,
+// and the response body is automatically closed. If a non-200 response status is received,
 // this function will return an error without executing the passed function.
 // This method will log the token if trace logging is enabled.
-func (c *Client) Get(ctx context.Context, uri []string, params url.Values, f func(io.ReadCloser) error) error {
-	log.Debug().Strs("uri", uri).Interface("qsp", params).Msg("client: initiating GET request")
+func (c *Client) Get(ctx context.Context, segs []string, params url.Values, f func(io.ReadCloser) error) error {
+	log.Debug().Strs("uri", segs).Interface("qsp", params).Msg("client: initiating GET request")
 
 	params.Add("token", c.token)
-	uri = append([]string{c.version}, uri...)
-	url := fmt.Sprintf("%s/%s?%s", c.domain, path.Join(uri...), params.Encode())
+	segs = append([]string{c.version}, segs...)
+	uri := fmt.Sprintf("%s/%s?%s", c.domain, path.Join(segs...), params.Encode())
 
 	<-c.ticker.C
-	log.Trace().Str("url", url).Msg("client: performing GET request")
-	res, err := ctxhttp.Get(ctx, c.client, url)
+	log.Trace().Str("uri", uri).Msg("client: performing GET request")
+	res, err := ctxhttp.Get(ctx, c.client, uri)
 	if err != nil {
 		log.Debug().Msg("client: received error from ctxhttp")
 		return err

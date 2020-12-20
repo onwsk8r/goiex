@@ -55,7 +55,7 @@ var _ = Describe("NewClient", func() {
 	})
 	It("should recognize a sandbox token and use the sandbox domain", func() {
 		By("recognizing test private keys")
-		token := "Tpk_sometoken"
+		token := "Tpk_sometoken" // nolint: gosec
 		httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s?token=%s",
 			iexcloud.APIDomainSandbox, iexcloud.APIVersionStable, token),
 			httpmock.NewStringResponder(200, "OK"))
@@ -69,7 +69,7 @@ var _ = Describe("NewClient", func() {
 		createClientAndEmptyRequest(token, "")
 	})
 	It("should panic if the length of the token is < 4", func() {
-		dangerous := func() { NewClient("123", "stable") } // nolint: go-lint
+		dangerous := func() { NewClient("123", "stable") } // nolint: errcheck
 		Expect(dangerous).To(Panic())
 	})
 })
