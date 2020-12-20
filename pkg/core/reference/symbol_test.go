@@ -19,6 +19,7 @@ package reference_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -30,13 +31,44 @@ var _ = Describe("Symbol", func() {
 	var expected []Symbol
 
 	BeforeEach(func() {
-		expected = GoldenSymbol()
+		expected = []Symbol{{
+			Symbol:   "A",
+			Name:     "Agilent Technologies Inc.",
+			Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, time.UTC),
+			Type:     "cs",
+			IEXID:    "IEX_46574843354B2D52",
+			Region:   "US",
+			Currency: "USD",
+			Enabled:  true,
+			FIGI:     "BBG000C2V3D6",
+			CIK:      "1090872",
+		}, {
+			Symbol:   "AA",
+			Name:     "Alcoa Corp.",
+			Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, time.UTC),
+			Type:     "cs",
+			IEXID:    "IEX_4238333734532D52",
+			Region:   "US",
+			Currency: "USD",
+			Enabled:  true,
+			FIGI:     "BBG00B3T3HD3",
+			CIK:      "1675149",
+		},
+		}
 	})
 
 	It("should parse symbols correctly", func() {
 		var symbols []Symbol
 		helper.TestdataFromJSON("core/reference/symbols.json", &symbols)
-		Expect(symbols).To(BeEquivalentTo(expected))
+		Expect(symbols).To(BeEquivalentTo(expected), cmp.Diff(symbols, expected))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenSymbol()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("symbol", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 
 	Describe("Validate()", func() {
@@ -60,35 +92,5 @@ var _ = Describe("Symbol", func() {
 			s.Date = time.Time{}
 			Expect(s.Validate()).To(MatchError("missing date"))
 		})
-	})
-})
-
-var _ = XDescribe("Symbol Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := []Symbol{
-			Symbol{
-				Symbol:   "A",
-				Name:     "Agilent Technologies Inc.",
-				Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, loc),
-				Type:     "cs",
-				IEXID:    "IEX_46574843354B2D52",
-				Region:   "US",
-				Currency: "USD",
-				Enabled:  true,
-			},
-			Symbol{
-				Symbol:   "AA",
-				Name:     "Alcoa Corp.",
-				Date:     time.Date(2019, time.March, 7, 0, 0, 0, 0, loc),
-				Type:     "cs",
-				IEXID:    "IEX_4238333734532D52",
-				Region:   "US",
-				Currency: "USD",
-				Enabled:  true,
-			},
-		}
-		helper.ToGolden("symbol", golden)
 	})
 })

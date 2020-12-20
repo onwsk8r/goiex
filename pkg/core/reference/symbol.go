@@ -35,6 +35,8 @@ type Symbol struct {
 	Type     string    `json:"type"`
 	Enabled  bool      `json:"isEnabled"`
 	Region   string    `json:"region"`
+	FIGI     string    `json:"figi"`
+	CIK      string    `json:"cik"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
