@@ -19,6 +19,7 @@ package fundamental_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -27,48 +28,52 @@ import (
 )
 
 var _ = Describe("Split", func() {
-	var expected Split
+	var expected []Split
 	BeforeEach(func() {
-		expected = GoldenSplit()
+		expected = []Split{{
+			DeclaredDate: time.Date(2017, time.August, 1, 0, 0, 0, 0, time.UTC),
+			ExDate:       time.Date(2017, time.August, 10, 0, 0, 0, 0, time.UTC),
+			Ratio:        0.142857,
+			ToFactor:     7,
+			FromFactor:   1,
+			Description:  "7-for-1 split",
+			Symbol:       "AAPL",
+			ID:           "SPLITS",
+			Key:          "AAPL",
+			Subkey:       "6846210",
+			Updated:      time.Date(2021, time.January, 2, 8, 33, 39, 432*1e6, time.UTC),
+		}}
 	})
 
 	It("should parse splits correctly", func() {
 		var res []Split
 		helper.TestdataFromJSON("core/stock/fundamental/splits.json", &res)
-		Expect(res[0]).To(Equal(expected))
+		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenSplit()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("split", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 
 	Describe("Validate()", func() {
 		It("should succeed if the Split is valid", func() {
-			Expect(expected.Validate()).To(Succeed())
+			Expect(expected[0].Validate()).To(Succeed())
 		})
 		It("should return an error if the ExDate is zero valued", func() {
-			expected.ExDate = time.Time{}
-			Expect(expected.Validate()).To(MatchError("ex date is missing"))
+			expected[0].ExDate = time.Time{}
+			Expect(expected[0].Validate()).To(MatchError("ex date is missing"))
 		})
 		It("should return an error if the ToFactor is not positive", func() {
-			expected.ToFactor = 0
-			Expect(expected.Validate()).To(MatchError("to factor is not positive"))
+			expected[0].ToFactor = 0
+			Expect(expected[0].Validate()).To(MatchError("to factor is not positive"))
 		})
 		It("should return an error if the FromFactor is not positive", func() {
-			expected.FromFactor = -4
-			Expect(expected.Validate()).To(MatchError("from factor is not positive"))
+			expected[0].FromFactor = -4
+			Expect(expected[0].Validate()).To(MatchError("from factor is not positive"))
 		})
-	})
-})
-
-var _ = XDescribe("Split Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := Split{
-			ExDate:       time.Date(2017, time.August, 10, 0, 0, 0, 0, loc),
-			DeclaredDate: time.Date(2017, time.August, 1, 0, 0, 0, 0, loc),
-			Ratio:        0.142857,
-			ToFactor:     7,
-			FromFactor:   1,
-			Description:  "7-for-1 split",
-		}
-		helper.ToGolden("split", golden)
 	})
 })

@@ -21,42 +21,53 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 // Split represents a data point from the basic splits endpoint.
 // https://iexcloud.io/docs/api/#splits-basic
 type Split struct {
-	ExDate       time.Time `json:"exDate"`
-	DeclaredDate time.Time `json:"declaredDate"`
-	Ratio        float64   `json:"ratio"`
-	ToFactor     int       `json:"toFactor"`
-	FromFactor   int       `json:"fromFactor"`
-	Description  string    `json:"description"`
+	ExDate       time.Time `json:"exDate,omitempty"`
+	DeclaredDate time.Time `json:"declaredDate,omitempty"`
+	Ratio        float64   `json:"ratio,omitempty"`
+	ToFactor     int       `json:"toFactor,omitempty"`
+	FromFactor   int       `json:"fromFactor,omitempty"`
+	Description  string    `json:"description,omitempty"`
+	Symbol       string    `json:"symbol,omitempty"`
+	ID           string    `json:"id,omitempty"`
+	Source       string    `json:"source,omitempty"`
+	Key          string    `json:"key,omitempty"`
+	Subkey       string    `json:"subkey,omitempty"`
+	Date         time.Time `json:"date,omitempty"`
+	Updated      time.Time `json:"updated,omitempty"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 // This function correctly translates the date fields, which are specified as "YYYY-MM-DD",
 // into time.Times by using time.Parse().
 // It will return an error if the JSON cannot be unmarshaled, but NOT if the date parsing fails.
-func (s *Split) UnmarshalJSON(data []byte) (err error) {
+func (s *Split) UnmarshalJSON(data []byte) (err error) { // nolint:dupl
 	type split Split
 	type embedded struct {
 		split
-		ExDate       string `json:"exDate"`
-		DeclaredDate string `json:"declaredDate"`
+		ExDate       string `json:"exDate,omitempty"`
+		DeclaredDate string `json:"declaredDate,omitempty"`
+		Date         int64  `json:"date,omitempty"`
+		Updated      int64  `json:"updated,omitempty"`
 	}
 	tmp := new(embedded)
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*s = Split(tmp.split)
 		// Ignore date parsing issues in case one or more dates are missing
-		s.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint: errcheck
-		s.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
-		log.Debug().
-			Dict("ex_date", zerolog.Dict().Str("original", tmp.ExDate).Time("parsed", s.ExDate)).
-			Dict("declared_date", zerolog.Dict().Str("original", tmp.DeclaredDate).Time("parsed", s.DeclaredDate)).
-			Msg("split: parsed date")
+		s.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint:errcheck
+		s.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint:errcheck
+		if tmp.Date > 0 {
+			s.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6) // nolint:gomnd
+		}
+		if tmp.Updated > 0 {
+			s.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6) // nolint:gomnd
+		}
+		log.Debug().Interface("original", tmp).Interface("final", s).Msg("split: parsed date")
 	}
 	return
 }

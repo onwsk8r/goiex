@@ -17,7 +17,6 @@
 package market
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/onwsk8r/goiex/pkg/core/stock/fundamental"
@@ -29,29 +28,6 @@ import (
 // https://iexcloud.io/docs/api/#upcoming-events for more information.
 type UpcomingSplit struct {
 	fundamental.Split
-	Symbol string `json:"symbol"`
-}
-
-// UnmarshalJSON satisfies the json.Unmarshaler interface.
-// This function works around the inherited UnmarshalJson() from the embedded Split
-func (u *UpcomingSplit) UnmarshalJSON(data []byte) (err error) {
-	// First get the Split part
-	var s fundamental.Split
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-	u.Split = s
-
-	// And then that left over ticker symbol
-	type ticker struct {
-		Symbol string `json:"symbol"`
-	}
-	tmp := new(ticker)
-	if err := json.Unmarshal(data, tmp); err != nil {
-		return err
-	}
-	u.Symbol = tmp.Symbol
-	return nil
 }
 
 // Validate satisfies the Validator interface.
