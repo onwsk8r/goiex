@@ -21,6 +21,7 @@ package core_test
 import (
 	"context"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -43,10 +44,14 @@ var _ = Describe("Option", func() {
 		})
 
 		It("should get all the options", func() {
+			expected := option.GoldenOption()
 			res, err := opt.Options(context.Background(), "AAPL", "201904")
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(res).To(ConsistOf(option.GoldenOption()))
+			// See the option entity class for why this is necessary
+			res[0].SettlementPrice = nil
+			res[0].MarginPrice = nil
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 	})
 })

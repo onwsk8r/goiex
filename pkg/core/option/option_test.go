@@ -19,6 +19,7 @@ package option_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -27,68 +28,80 @@ import (
 )
 
 var _ = Describe("Option", func() {
-	var expected Option
+	var expected []Option
 	BeforeEach(func() {
-		expected = GoldenOption()
+		expected = []Option{{
+			Ask:                 func(i float64) *float64 { return &i }(0.1),
+			Bid:                 func(i float64) *float64 { return &i }(0.05),
+			CFICode:             "OPAXXX",
+			Close:               func(i float64) *float64 { return &i }(0.05),
+			ClosingPrice:        func(i float64) *float64 { return &i }(0.05),
+			ContractDescription: "CVM Option Put 18/12/2020 2.5 on Ordinary Shares",
+			ContractName:        "Cel-Sci Corp",
+			ContractSize:        100,
+			Currency:            "USD",
+			ExerciseStyle:       "A",
+			ExpirationDate:      time.Date(2020, 12, 18, 0, 0, 0, 0, time.UTC),
+			FIGI:                "BBG00PZWYFY7",
+			High:                func(i float64) *float64 { return &i }(0.1),
+			IsAdjusted:          false,
+			LastTrade:           time.Date(2020, 11, 25, 20, 24, 13, 0, time.UTC),
+			LastUpdated:         time.Date(2020, 11, 29, 0, 0, 0, 0, time.UTC),
+			Low:                 func(i float64) *float64 { return &i }(0.05),
+			MarginPrice:         func(i float64) *float64 { return &i }(-0),
+			Open:                func(i float64) *float64 { return &i }(0.1),
+			OpenInterest:        func(i uint) *uint { return &i }(2039),
+			SettlementPrice:     func(i float64) *float64 { return &i }(-0),
+			Side:                "put",
+			StrikePrice:         3,
+			Symbol:              "CVM",
+			Type:                "equity",
+			Volume:              func(i uint) *uint { return &i }(17),
+			ID:                  "CVM20201218P00003000",
+			Key:                 "CVM",
+			Subkey:              "CVM20201218P00003000",
+			Date:                time.Date(2020, 11, 25, 0, 0, 0, 0, time.UTC),
+			Updated:             time.Date(2020, 11, 30, 12, 25, 17, 0, time.UTC),
+		}}
 	})
 
 	It("should parse option prices correctly", func() {
 		var res []Option
 		helper.TestdataFromJSON("core/option/options.json", &res)
-
-		// See https://github.com/golang/go/issues/10089#issuecomment-77463157 for why this is necessary
-		// My guess is because the "values pointed to" for the location are identical, but each time.Time
-		// contains a different pointer (ie living in a different memory address).
-		// Expect(res[0].ExpirationDate.Equal(expected.ExpirationDate)).To(BeTrue(), "expiration dates are inequal")
-		// res[0].ExpirationDate = expected.ExpirationDate
-		// Expect(res[0].LastUpdated.Equal(expected.LastUpdated)).To(BeTrue(), "last updated dates are inequal")
-		// res[0].LastUpdated = expected.LastUpdated
-		Expect(res[0]).To(Equal(expected), "values are inequal")
+		Expect(cmp.Equal(res, expected)).To(BeTrue(), cmp.Diff(res, expected))
 	})
 
 	Describe("Validate()", func() {
 		It("should succeed if the Option is valid", func() {
-			Expect(expected.Validate()).To(Succeed())
+			Expect(expected[0].Validate()).To(Succeed())
 		})
 		It("should return an error if the Symbol is empty", func() {
-			expected.Symbol = ""
-			Expect(expected.Validate()).To(MatchError("missing symbol"))
+			expected[0].Symbol = ""
+			Expect(expected[0].Validate()).To(MatchError("missing symbol"))
 		})
 		It("should return an error if the ID is empty", func() {
-			expected.ID = ""
-			Expect(expected.Validate()).To(MatchError("missing id"))
+			expected[0].ID = ""
+			Expect(expected[0].Validate()).To(MatchError("missing id"))
 		})
 		It("should return an error if the ExpirationDate is zero valued", func() {
-			expected.ExpirationDate = time.Time{}
-			Expect(expected.Validate()).To(MatchError("missing expiration date"))
+			expected[0].ExpirationDate = time.Time{}
+			Expect(expected[0].Validate()).To(MatchError("missing expiration date"))
 		})
 		It("should return an error if the StrikePrice is zero", func() {
-			expected.StrikePrice = 0
-			Expect(expected.Validate()).To(MatchError("strike price is zero"))
+			expected[0].StrikePrice = 0
+			Expect(expected[0].Validate()).To(MatchError("strike price is zero"))
 		})
 	})
-})
 
-var _ = XDescribe("Option Golden", func() {
 	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := Option{
-			Symbol:         "AAPL",
-			ID:             "AAPL20190621C00240000",
-			ExpirationDate: time.Date(2019, time.June, 21, 0, 0, 0, 0, loc),
-			ContractSize:   100,
-			StrikePrice:    240,
-			ClosingPrice:   0.39,
-			Side:           "call",
-			Type:           "equity",
-			Volume:         884,
-			OpenInterest:   12197,
-			Bid:            0.38,
-			Ask:            0.42,
-			LastUpdated:    time.Date(2019, time.April, 25, 0, 0, 0, 0, loc),
-			IsAdjusted:     false,
+		// Pointers to zero values don't encode/decode properly
+		expected[0].MarginPrice = nil
+		expected[0].SettlementPrice = nil
+		var golden []Option
+		helper.FromGolden("option", &golden)
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("option", expected)
+			Fail(cmp.Diff(golden, expected))
 		}
-		helper.ToGolden("option", golden)
 	})
 })
