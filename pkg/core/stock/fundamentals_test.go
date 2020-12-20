@@ -21,6 +21,7 @@ package stock_test
 import (
 	"context"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -47,7 +48,7 @@ var _ = Describe("Fundamentals", func() {
 			Expect(httpmock.GetTotalCallCount()).To(Equal(1))
 			Expect(err).ToNot(HaveOccurred())
 			expected := fundamental.GoldenDividends()
-			Expect(res).To(ConsistOf(expected))
+			Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 		})
 	})
 

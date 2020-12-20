@@ -19,6 +19,7 @@ package fundamental_test
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -29,90 +30,55 @@ import (
 var _ = Describe("Dividend", func() {
 	var expected []Dividend
 	BeforeEach(func() {
-		expected = GoldenDividends()
+		expected = []Dividend{{
+			Amount:       0.70919585493507512,
+			Currency:     "USD",
+			DeclaredDate: time.Date(2020, time.October, 19, 0, 0, 0, 0, time.UTC),
+			Description:  "Ordinary Shares",
+			ExDate:       time.Date(2020, time.October, 28, 0, 0, 0, 0, time.UTC),
+			Flag:         "Cash",
+			Frequency:    "quarterly",
+			PaymentDate:  time.Date(2020, time.November, 6, 0, 0, 0, 0, time.UTC),
+			RecordDate:   time.Date(2020, time.October, 28, 0, 0, 0, 0, time.UTC),
+			RefID:        2096218,
+			Symbol:       "AAPL",
+			ID:           "DIVIDENDS",
+			Key:          "AAPL",
+			Subkey:       "2053393",
+			Date:         time.Date(2021, time.February, 3, 22, 42, 46, 191*1e6, time.UTC),
+			Updated:      time.Date(2021, time.February, 3, 22, 42, 46, 191*1e6, time.UTC),
+		}}
 	})
 
 	It("should parse dividends correctly", func() {
 		var res []Dividend
 		helper.TestdataFromJSON("core/stock/fundamental/dividends.json", &res)
-		Expect(res).To(ConsistOf(expected))
+		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
+	})
+
+	It("should match the golden file", func() {
+		golden := GoldenDividends()
+		if !cmp.Equal(golden, expected) {
+			helper.ToGolden("dividend", expected)
+			Fail(cmp.Diff(golden, expected))
+		}
 	})
 
 	Describe("Validate()", func() {
 		It("should succeed if the Dividend is valid", func() {
-			for idx := range expected {
-				Expect(expected[idx].Validate()).To(Succeed())
-			}
+			Expect(expected[0].Validate()).To(Succeed())
 		})
 		It("should return an error if the ExDate is zero valued", func() {
 			expected[0].ExDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("ex date is missing"))
 		})
 		It("should return an error if the Amount is zero", func() {
-			expected[1].Amount = 0
-			Expect(expected[1].Validate()).To(MatchError("amount is missing"))
+			expected[0].Amount = 0
+			Expect(expected[0].Validate()).To(MatchError("amount is missing"))
 		})
 		It("should return an error if the Currency is zero", func() {
-			expected[2].Currency = ""
-			Expect(expected[2].Validate()).To(MatchError("currency is missing"))
+			expected[0].Currency = ""
+			Expect(expected[0].Validate()).To(MatchError("currency is missing"))
 		})
-	})
-})
-
-var _ = XDescribe("Dividend Golden", func() {
-	It("should load the golden file", func() {
-		loc, err := time.LoadLocation("UTC")
-		Expect(err).ToNot(HaveOccurred())
-		golden := []Dividend{
-			Dividend{
-				ExDate:       time.Date(2020, time.January, 30, 0, 0, 0, 0, loc),
-				PaymentDate:  time.Date(2020, time.February, 8, 0, 0, 0, 0, loc),
-				RecordDate:   time.Date(2020, time.January, 24, 0, 0, 0, 0, loc),
-				DeclaredDate: time.Date(2020, time.January, 10, 0, 0, 0, 0, loc),
-				Amount:       0.41,
-				Flag:         "Chas",
-				Currency:     "USD",
-				Description:  "Uitn",
-				Frequency:    "uyarrleqt",
-				Date:         time.Date(2020, time.April, 19, 0, 0, 0, 0, loc),
-			},
-			Dividend{
-				ExDate:       time.Date(2019, time.October, 27, 0, 0, 0, 0, loc),
-				PaymentDate:  time.Date(2019, time.November, 13, 0, 0, 0, 0, loc),
-				RecordDate:   time.Date(2019, time.November, 2, 0, 0, 0, 0, loc),
-				DeclaredDate: time.Date(2019, time.October, 16, 0, 0, 0, 0, loc),
-				Amount:       0.39,
-				Flag:         "Csha",
-				Currency:     "USD",
-				Description:  "Unti",
-				Frequency:    "rqeyltaur",
-				Date:         time.Date(2020, time.April, 19, 0, 0, 0, 0, loc),
-			},
-			Dividend{
-				ExDate:       time.Date(2019, time.August, 6, 0, 0, 0, 0, loc),
-				PaymentDate:  time.Date(2019, time.August, 11, 0, 0, 0, 0, loc),
-				RecordDate:   time.Date(2019, time.July, 26, 0, 0, 0, 0, loc),
-				DeclaredDate: time.Date(2019, time.July, 17, 0, 0, 0, 0, loc),
-				Amount:       0.4,
-				Flag:         "aCsh",
-				Currency:     "USD",
-				Description:  "iUtn",
-				Frequency:    "raqletyru",
-				Date:         time.Date(2020, time.April, 19, 0, 0, 0, 0, loc),
-			},
-			Dividend{
-				ExDate:       time.Date(2019, time.April, 29, 0, 0, 0, 0, loc),
-				PaymentDate:  time.Date(2019, time.April, 30, 0, 0, 0, 0, loc),
-				RecordDate:   time.Date(2019, time.April, 23, 0, 0, 0, 0, loc),
-				DeclaredDate: time.Date(2019, time.April, 13, 0, 0, 0, 0, loc),
-				Amount:       0.41,
-				Flag:         "hCas",
-				Currency:     "USD",
-				Description:  "Uint",
-				Frequency:    "qrauetryl",
-				Date:         time.Date(2020, time.April, 19, 0, 0, 0, 0, loc),
-			},
-		}
-		helper.ToGolden("dividend", golden)
 	})
 })
