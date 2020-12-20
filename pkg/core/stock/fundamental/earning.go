@@ -21,45 +21,55 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 // Earning represents a data point from the Earnings endpoint.
 // https://iexcloud.io/docs/api/#earnings
 type Earning struct {
-	ActualEPS            float64   `json:"actualEPS"`
-	ConsensusEPS         float64   `json:"consensusEPS"`
-	AnnounceTime         string    `json:"announceTime"` // TODO: BTO, DMT, AMC
-	NumberOfEstimates    int       `json:"numberOfEstimates"`
-	EPSSurpriseDollar    float64   `json:"EPSSurpriseDollar"`
-	EPSReportDate        time.Time `json:"EPSReportDate"`
-	FiscalPeriod         string    `json:"fiscalPeriod"`
-	FiscalEndDate        time.Time `json:"fiscalEndDate"`
-	YearAgo              float64   `json:"yearAgo"`
-	YearAgoChangePercent float64   `json:"yearAgoChangePercent"`
+	EPSReportDate            time.Time `json:"EPSReportDate,omitempty"`
+	EPSSurpriseDollar        float64   `json:"EPSSurpriseDollar,omitempty"`
+	EPSSurpriseDollarPercent float64   `json:"EPSSurpriseDollarPercent,omitempty"`
+	ActualEPS                float64   `json:"actualEPS,omitempty"`
+	AnnounceTime             string    `json:"announceTime,omitempty"` // TODO: BTO, DMT, AMC
+	ConsensusEPS             float64   `json:"consensusEPS,omitempty"`
+	Currency                 string    `json:"currency,omitempty"`
+	FiscalEndDate            time.Time `json:"fiscalEndDate,omitempty"`
+	FiscalPeriod             string    `json:"fiscalPeriod,omitempty"`
+	NumberOfEstimates        int       `json:"numberOfEstimates,omitempty"`
+	PeriodType               string    `json:"periodType,omitempty"`
+	Symbol                   string    `json:"symbol,omitempty"`
+	YearAgo                  float64   `json:"yearAgo,omitempty"`
+	YearAgoChangePercent     float64   `json:"yearAgoChangePercent,omitempty"`
+	ID                       string    `json:"id,omitempty"`
+	Source                   string    `json:"source,omitempty"`
+	Key                      string    `json:"key,omitempty"`
+	Subkey                   string    `json:"subkey,omitempty"`
+	Date                     time.Time `json:"date,omitempty"`
+	Updated                  time.Time `json:"updated,omitempty"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 // This function correctly translates the date fields, which are specified as "YYYY-MM-DD",
 // into time.Times by using time.Parse().
 // It will return an error if the JSON cannot be unmarshaled, but NOT if the date parsing fails.
-func (e *Earning) UnmarshalJSON(data []byte) (err error) {
+func (e *Earning) UnmarshalJSON(data []byte) (err error) { // nolint:dupl
 	type earning Earning
 	type embedded struct {
 		earning
 		EPSReportDate string `json:"EPSReportDate"`
 		FiscalEndDate string `json:"fiscalEndDate"`
+		Date          int64  `json:"date,omitempty"`
+		Updated       int64  `json:"updated,omitempty"`
 	}
 	tmp := new(embedded)
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*e = Earning(tmp.earning)
-		e.EPSReportDate, _ = time.Parse("2006-01-02", tmp.EPSReportDate) // nolint: errcheck
-		e.FiscalEndDate, _ = time.Parse("2006-01-02", tmp.FiscalEndDate) // nolint: errcheck
-		log.Debug().
-			Dict("report_date", zerolog.Dict().Str("original", tmp.EPSReportDate).Time("parsed", e.EPSReportDate)).
-			Dict("fiscal_end_date", zerolog.Dict().Str("original", tmp.FiscalEndDate).Time("parsed", e.FiscalEndDate)).
-			Msg("earning: parsed dates")
+		e.EPSReportDate, _ = time.Parse("2006-01-02", tmp.EPSReportDate) // nolint:errcheck
+		e.FiscalEndDate, _ = time.Parse("2006-01-02", tmp.FiscalEndDate) // nolint:errcheck
+		e.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)             // nolint:gomnd
+		e.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)    // nolint:gomnd
+		log.Debug().Interface("original", tmp).Interface("final", e).Msg("earning: parsed dates")
 	}
 	return
 }

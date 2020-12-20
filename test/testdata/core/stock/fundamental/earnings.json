@@ -2,28 +2,25 @@
     "symbol": "AAPL",
     "earnings": [
         {
-            "actualEPS": 2.46,
-            "consensusEPS": 2.36,
+            "EPSReportDate": "2020-10-22",
+            "EPSSurpriseDollar": 0.330098697767743855,
+            "EPSSurpriseDollarPercent": 0.1440300992341432,
+            "actualEPS": 5.07,
             "announceTime": "AMC",
-            "numberOfEstimates": 34,
-            "EPSSurpriseDollar": 0.1,
-            "EPSReportDate": "2019-04-30",
-            "fiscalPeriod": "Q1 2019",
-            "fiscalEndDate": "2019-03-31",
-            "yearAgo": 2.73,
-            "yearAgoChangePercent": -0.0989
-        },
-        {
-            "actualEPS": 4.18,
-            "consensusEPS": 4.17,
-            "announceTime": "AMC",
-            "numberOfEstimates": 35,
-            "EPSSurpriseDollar": 0.01,
-            "EPSReportDate": "2019-01-29",
-            "fiscalPeriod": "Q4 2018",
-            "fiscalEndDate": "2018-12-31",
-            "yearAgo": 3.89,
-            "yearAgoChangePercent": 0.0746
+            "consensusEPS": 2.703327,
+            "currency": "USD",
+            "fiscalEndDate": "2020-09-18",
+            "fiscalPeriod": "Q4 2020",
+            "numberOfEstimates": 31,
+            "periodType": "quarterly",
+            "symbol": "AAPL",
+            "yearAgo": 4.7006,
+            "yearAgoChangePercent": -0.7303425659240847,
+            "id": "PREMIUM_EARNINGS",
+            "key": "AAPL",
+            "subkey": "Q42020",
+            "date": 1606312125071,
+            "updated": 1606312125071
         }
     ]
 }
