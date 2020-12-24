@@ -19,6 +19,7 @@ package rest
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -104,16 +105,17 @@ func checkResponse(c *resty.Client, resp *resty.Response) error {
 
 // checkRetry returns true for non-nil erros, except for canceled contexts and 400-404,413,451
 func checkRetry(r *resty.Response, err error) bool {
-	if r != nil && r.IsError() && (r.StatusCode() == http.StatusBadRequest ||
-		r.StatusCode() == http.StatusUnauthorized ||
-		r.StatusCode() == http.StatusPaymentRequired ||
-		r.StatusCode() == http.StatusForbidden ||
-		r.StatusCode() == http.StatusNotFound ||
-		r.StatusCode() == http.StatusRequestEntityTooLarge ||
-		r.StatusCode() == http.StatusUnavailableForLegalReasons) {
-		return false
+	if r != nil && r.IsError() {
+		return !(r.StatusCode() == http.StatusBadRequest ||
+			r.StatusCode() == http.StatusUnauthorized ||
+			r.StatusCode() == http.StatusPaymentRequired ||
+			r.StatusCode() == http.StatusForbidden ||
+			r.StatusCode() == http.StatusNotFound ||
+			r.StatusCode() == http.StatusRequestEntityTooLarge ||
+			r.StatusCode() == http.StatusUnavailableForLegalReasons)
 	}
-	return err != nil && err.Error() != "context canceled"
+	_, ok := err.(*url.Error)
+	return ok
 }
 
 type zl struct {
