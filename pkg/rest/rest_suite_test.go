@@ -18,9 +18,11 @@ package rest_test
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/go-resty/resty/v2"
+	"github.com/google/go-cmp/cmp"
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -44,3 +46,19 @@ var _ = BeforeSuite(func() {
 
 var _ = BeforeEach(httpmock.Reset)
 var _ = AfterSuite(httpmock.DeactivateAndReset)
+
+func GetAndVerify(url string, expected interface{}, f func() (interface{}, error)) func() {
+	return func() {
+		var got interface{}
+		var err error
+		BeforeEach(func() {
+			httpmock.RegisterResponder("GET", url, httpmock.NewJsonResponderOrPanic(http.StatusOK, &expected))
+			got, err = f()
+		})
+		It("should hit the expected URL", func() { Expect(httpmock.GetTotalCallCount()).To(Equal(1)) })
+		It("should not encounter any errors", func() { Expect(err).ToNot(HaveOccurred()) })
+		It("should return the expected data", func() {
+			Expect(cmp.Equal(expected, got)).To(BeTrue(), cmp.Diff(expected, got))
+		})
+	}
+}

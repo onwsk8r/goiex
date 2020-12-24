@@ -14,49 +14,39 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package core
+package rest
 
 import (
 	"context"
-	"encoding/json"
-	"io"
-	"net/url"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/onwsk8r/goiex/pkg/core/reference"
-	"github.com/onwsk8r/goiex/pkg/iexcloud"
-	"github.com/rs/zerolog/log"
 )
 
-// Reference exposes methods for accessing IEX Cloud reference data.
-// A list of endpoints can be found at https://iexcloud.io/docs/api/#reference-data.
+// Reference exposes methods for calling Reference endoints.
+// https://iexcloud.io/docs/api/#reference-data
 type Reference struct {
-	client iexcloud.Client
+	client *resty.Client
 }
 
 // NewReference creates a new Reference with the given client
-func NewReference(client iexcloud.Client) *Reference {
-	log.Trace().Msg("instantiating new core.Reference")
-	return &Reference{client}
+// https://iexcloud.io/docs/api/#reference-data
+func NewReference(client *resty.Client) *Reference {
+	return &Reference{client: client}
 }
 
 // Symbols fetches a list of symbols that are supported for making API calls.
+// The list seems to be exclusive to US equities.
 // https://iexcloud.io/docs/api/#symbols
 func (r *Reference) Symbols(ctx context.Context) (symbols []reference.Symbol, err error) {
-	uri := []string{"ref-data", "symbols"}
-	log.Trace().Strs("uri", uri).Msg("reference: calling client")
-	err = r.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
-		return json.NewDecoder(r).Decode(&symbols)
-	})
+	_, err = r.client.R().SetContext(ctx).SetResult(&symbols).Get("/{version}/ref-data/symbols")
 	return
 }
 
-// Symbols fetches a list of options symbols/dates that are supported for making API calls.
+// OptionsSymbols fetches a list of options symbols/dates that are supported for making API calls.
+// This call returns an object keyed by symbol with the value of each symbol being an array of available contract dates.
 // https://iexcloud.io/docs/api/#options-symbols
-func (r *Reference) OptionSymbols(ctx context.Context) (symbols reference.OptionSymbol, err error) {
-	uri := []string{"ref-data", "options", "symbols"}
-	log.Trace().Strs("uri", uri).Msg("reference: calling client")
-	err = r.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
-		return json.NewDecoder(r).Decode(&symbols)
-	})
+func (r *Reference) OptionsSymbols(ctx context.Context) (symbols reference.OptionSymbol, err error) {
+	_, err = r.client.R().SetContext(ctx).SetResult(&symbols).Get("/{version}/ref-data/options/symbols")
 	return
 }

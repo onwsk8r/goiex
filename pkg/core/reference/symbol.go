@@ -31,7 +31,7 @@ type Symbol struct {
 	Exchange string    `json:"exchange"`
 	IEXID    string    `json:"iexid"`
 	Currency string    `json:"currency"`
-	Date     time.Time `json:"date"`
+	Date     time.Time `json:"-"`
 	Type     string    `json:"type"`
 	Enabled  bool      `json:"isEnabled"`
 	Region   string    `json:"region"`
@@ -55,6 +55,21 @@ func (s *Symbol) UnmarshalJSON(data []byte) (err error) {
 		log.Debug().Str("original", tmp.Date).Time("parsed", s.Date).Msg("symbol: parsed date")
 	}
 	return
+}
+
+// MarshalJSON satisfies the json.Unmarshaler interface.
+// This function correctly translates the date field, which is specified as "YYYY-MM-DD",
+// into a time.Time by using time.Parse().
+func (s *Symbol) MarshalJSON() ([]byte, error) {
+	type symbol Symbol
+	type embedded struct {
+		symbol
+		Date string `json:"date"`
+	}
+	tmp := new(embedded)
+	tmp.symbol = symbol(*s)
+	tmp.Date = s.Date.Format("2006-01-02")
+	return json.Marshal(tmp)
 }
 
 // Validate satisfies the Validator interface.
