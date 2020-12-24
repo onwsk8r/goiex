@@ -3,6 +3,7 @@ module github.com/onwsk8r/goiex
 go 1.13
 
 require (
+	github.com/go-resty/resty/v2 v2.3.0
 	github.com/google/go-cmp v0.5.4
 	github.com/jarcoal/httpmock v1.0.6
 	github.com/onsi/ginkgo v1.14.2
