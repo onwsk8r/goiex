@@ -99,6 +99,28 @@ func (o *Option) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
+func (o *Option) MarshalJSON() ([]byte, error) {
+	type option Option
+	type embedded struct {
+		option
+		ExpirationDate string `json:"expirationDate,omitempty"`
+		LastTradeDate  string `json:"lastTradeDate,omitempty"`
+		LastTradeTime  string `json:"lastTradeTime,omitempty"`
+		LastUpdated    string `json:"lastUpdated,omitempty"`
+		Date           int64  `json:"date,omitempty"`
+		Updated        int64  `json:"updated,omitempty"`
+	}
+	tmp := new(embedded)
+	tmp.option = option(*o)
+	tmp.ExpirationDate = o.ExpirationDate.Format("20060102")
+	tmp.LastUpdated = o.LastUpdated.Format("2006-01-02")
+	tmp.LastTradeDate = o.LastTrade.Format("2006-01-02")
+	tmp.LastTradeTime = o.LastTrade.Format("15:04:05")
+	tmp.Date = o.Date.UnixNano() / 1e6       // nolint: gomnd
+	tmp.Updated = o.Updated.UnixNano() / 1e6 // nolint: gomnd
+	return json.Marshal(tmp)
+}
+
 // Validate satisfies the Validator interface.
 // It will return an error if the Date, Close or UClose fields are equal to their zero value.
 func (o *Option) Validate() error {
