@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
@@ -90,6 +91,9 @@ var _ = Describe("REST Client", func() {
 	Context("when an HTTP error occurs", func() {
 		var err error
 		BeforeEach(func() {
+			if _, ok := os.LookupEnv("CI"); !ok {
+				Skip("skipping slow test")
+			}
 			httpmock.RegisterNoResponder(httpmock.NewErrorResponder(fmt.Errorf("oops")))
 			_, err = client.R().Get("/foo")
 		})
@@ -102,6 +106,10 @@ var _ = Describe("REST Client", func() {
 
 	DescribeTable("Invalid response codes",
 		func(code int, retry bool) {
+			if _, ok := os.LookupEnv("CI"); !ok && retry {
+				Skip("skipping slow test")
+			}
+
 			httpmock.RegisterNoResponder(httpmock.NewStringResponder(code, "hello"))
 			_, err := client.R().Get("/foo")
 			callCount := 1
