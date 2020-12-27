@@ -1,4 +1,4 @@
-package price_test
+package stock_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestPrice(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Price Suite")
+	RunSpecs(t, "Stock Suite")
 }

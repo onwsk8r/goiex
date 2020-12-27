@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "github.com/onwsk8r/goiex/pkg/core/market"
-	"github.com/onwsk8r/goiex/pkg/core/stock/fundamental"
+	"github.com/onwsk8r/goiex/pkg/core/stock"
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
@@ -16,7 +16,7 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 	var expected []UpcomingSplit
 	BeforeEach(func() {
 		expected = []UpcomingSplit{{
-			Split: fundamental.Split{
+			Split: stock.Split{
 				Symbol:       "MBCN",
 				ExDate:       time.Date(2019, time.November, 18, 0, 0, 0, 0, time.UTC),
 				DeclaredDate: time.Date(2019, time.October, 13, 0, 0, 0, 0, time.UTC),
@@ -25,7 +25,7 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 				FromFactor:   1,
 				Description:  "l-S i-op2r1tf",
 			}}, {
-			Split: fundamental.Split{
+			Split: stock.Split{
 				Symbol:       "CVLY",
 				ExDate:       time.Date(2019, time.December, 19, 0, 0, 0, 0, time.UTC),
 				DeclaredDate: time.Date(2019, time.October, 18, 0, 0, 0, 0, time.UTC),
@@ -34,7 +34,7 @@ var _ = Describe("UpcomingSplit", func() { // nolint: dupl
 				FromFactor:   20,
 				Description:  "il pr0f2S--1t2o",
 			}}, {
-			Split: fundamental.Split{
+			Split: stock.Split{
 				Symbol:       "CRPYF",
 				ExDate:       time.Date(2020, time.January, 21, 0, 0, 0, 0, time.UTC),
 				DeclaredDate: time.Date(2020, time.January, 29, 0, 0, 0, 0, time.UTC),

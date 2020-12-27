@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package fundamental_test
+package stock_test
 
 import (
 	"time"
@@ -23,57 +23,62 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/onwsk8r/goiex/pkg/core/stock/fundamental"
+	. "github.com/onwsk8r/goiex/pkg/core/stock"
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
-var _ = Describe("Split", func() {
-	var expected []Split
+var _ = Describe("Dividend", func() {
+	var expected []Dividend
 	BeforeEach(func() {
-		expected = []Split{{
-			DeclaredDate: time.Date(2017, time.August, 1, 0, 0, 0, 0, time.UTC),
-			ExDate:       time.Date(2017, time.August, 10, 0, 0, 0, 0, time.UTC),
-			Ratio:        0.142857,
-			ToFactor:     7,
-			FromFactor:   1,
-			Description:  "7-for-1 split",
+		expected = []Dividend{{
+			Amount:       0.70919585493507512,
+			Currency:     "USD",
+			DeclaredDate: time.Date(2020, time.October, 19, 0, 0, 0, 0, time.UTC),
+			Description:  "Ordinary Shares",
+			ExDate:       time.Date(2020, time.October, 28, 0, 0, 0, 0, time.UTC),
+			Flag:         "Cash",
+			Frequency:    "quarterly",
+			PaymentDate:  time.Date(2020, time.November, 6, 0, 0, 0, 0, time.UTC),
+			RecordDate:   time.Date(2020, time.October, 28, 0, 0, 0, 0, time.UTC),
+			RefID:        2096218,
 			Symbol:       "AAPL",
-			ID:           "SPLITS",
+			ID:           "DIVIDENDS",
 			Key:          "AAPL",
-			Subkey:       "6846210",
-			Updated:      time.Date(2021, time.January, 2, 8, 33, 39, 432*1e6, time.UTC),
+			Subkey:       "2053393",
+			Date:         time.Date(2021, time.February, 3, 22, 42, 46, 191*1e6, time.UTC),
+			Updated:      time.Date(2021, time.February, 3, 22, 42, 46, 191*1e6, time.UTC),
 		}}
 	})
 
-	It("should parse splits correctly", func() {
-		var res []Split
-		helper.TestdataFromJSON("core/stock/fundamental/splits.json", &res)
+	It("should parse dividends correctly", func() {
+		var res []Dividend
+		helper.TestdataFromJSON("core/stock/dividends.json", &res)
 		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 	})
 
 	It("should match the golden file", func() {
-		golden := GoldenSplit()
+		golden := GoldenDividends()
 		if !cmp.Equal(golden, expected) {
-			helper.ToGolden("split", expected)
+			helper.ToGolden("dividend", expected)
 			Fail(cmp.Diff(golden, expected))
 		}
 	})
 
 	Describe("Validate()", func() {
-		It("should succeed if the Split is valid", func() {
+		It("should succeed if the Dividend is valid", func() {
 			Expect(expected[0].Validate()).To(Succeed())
 		})
 		It("should return an error if the ExDate is zero valued", func() {
 			expected[0].ExDate = time.Time{}
 			Expect(expected[0].Validate()).To(MatchError("ex date is missing"))
 		})
-		It("should return an error if the ToFactor is not positive", func() {
-			expected[0].ToFactor = 0
-			Expect(expected[0].Validate()).To(MatchError("to factor is not positive"))
+		It("should return an error if the Amount is zero", func() {
+			expected[0].Amount = 0
+			Expect(expected[0].Validate()).To(MatchError("amount is missing"))
 		})
-		It("should return an error if the FromFactor is not positive", func() {
-			expected[0].FromFactor = -4
-			Expect(expected[0].Validate()).To(MatchError("from factor is not positive"))
+		It("should return an error if the Currency is zero", func() {
+			expected[0].Currency = ""
+			Expect(expected[0].Validate()).To(MatchError("currency is missing"))
 		})
 	})
 })

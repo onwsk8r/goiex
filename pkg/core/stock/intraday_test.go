@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package price_test
+package stock_test
 
 import (
 	"time"
@@ -23,7 +23,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/onwsk8r/goiex/pkg/core/stock/price"
+	. "github.com/onwsk8r/goiex/pkg/core/stock"
 	"github.com/onwsk8r/goiex/test/helper"
 )
 
@@ -57,7 +57,7 @@ var _ = Describe("Intraday", func() { // nolint: dupl
 
 	It("should parse intraday prices correctly", func() {
 		var res []Intraday
-		helper.TestdataFromJSON("core/stock/price/intraday.json", &res)
+		helper.TestdataFromJSON("core/stock/intraday.json", &res)
 		Expect(cmp.Equal(expected, res)).To(BeTrue(), cmp.Diff(expected, res))
 	})
 

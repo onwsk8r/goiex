@@ -14,9 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package fundamental
+package stock
 
 import "github.com/onwsk8r/goiex/test/helper"
+
+// GoldenHistorical retsurns golden data for the Historical type
+func GoldenHistorical() (h []Historical) {
+	helper.FromGolden("historical", &h)
+	return
+}
+
+// GoldenPreviousDay returns golden data for the PreviousDay type
+func GoldenPreviousDay() (p PreviousDay) {
+	helper.FromGolden("previous_day", &p)
+	return
+}
+
+// GoldenIntraday returns golden data for the Intraday type
+func GoldenIntraday() (i []Intraday) {
+	helper.FromGolden("intraday", &i)
+	return
+}
 
 // GoldenDividends returns golden data for the Dividend type
 func GoldenDividends() (d []Dividend) {

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package price
+package stock
 
 // PreviousDay represents a data point from the Previous Day Prices endpoint.
 // https://iexcloud.io/docs/api/#previous-day-price

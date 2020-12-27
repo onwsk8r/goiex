@@ -19,7 +19,7 @@ package market
 import (
 	"fmt"
 
-	"github.com/onwsk8r/goiex/pkg/core/stock/fundamental"
+	"github.com/onwsk8r/goiex/pkg/core/stock"
 )
 
 // UpcomingSplit represents a data point from the upcoming events endpoint.
@@ -27,7 +27,7 @@ import (
 // https://iexcloud.io/docs/api/#splits-basic and
 // https://iexcloud.io/docs/api/#upcoming-events for more information.
 type UpcomingSplit struct {
-	fundamental.Split
+	stock.Split
 }
 
 // Validate satisfies the Validator interface.
