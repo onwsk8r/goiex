@@ -22,7 +22,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -68,14 +67,30 @@ func (u *UpcomingDividend) UnmarshalJSON(data []byte) (err error) {
 	u.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint: errcheck
 	u.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
 	u.Amount, _ = strconv.ParseFloat(tmp.Amount, 64)               // nolint: errcheck
-	log.Debug().
-		Dict("ex_date", zerolog.Dict().Str("original", tmp.ExDate).Time("parsed", u.ExDate)).
-		Dict("payment_date", zerolog.Dict().Str("original", tmp.PaymentDate).Time("parsed", u.PaymentDate)).
-		Dict("record_date", zerolog.Dict().Str("original", tmp.RecordDate).Time("parsed", u.RecordDate)).
-		Dict("declared_date", zerolog.Dict().Str("original", tmp.DeclaredDate).Time("parsed", u.DeclaredDate)).
-		Dict("amount", zerolog.Dict().Str("original", tmp.Amount).Float64("parsed", u.Amount)).
-		Msg("upcoming_dividend: parsed date")
+	log.Debug().Interface("orig", tmp).Interface("parsed", u).Msg("upcoming_dividend: parsed date")
 	return nil
+}
+
+// MarshalJSON satisfies the json.Marshaler interface.
+// It undoes what UnmarshalJSON does.
+func (u *UpcomingDividend) MarshalJSON() ([]byte, error) {
+	type dividend UpcomingDividend
+	type embedded struct {
+		dividend
+		Amount       string `json:"amount"`
+		ExDate       string `json:"exDate,omitempty"`
+		PaymentDate  string `json:"paymentDate,omitempty"`
+		RecordDate   string `json:"recordDate,omitempty"`
+		DeclaredDate string `json:"declaredDate,omitempty"`
+	}
+	tmp := new(embedded)
+	tmp.dividend = dividend(*u)
+	tmp.DeclaredDate = u.DeclaredDate.Format("2006-01-02")
+	tmp.ExDate = u.ExDate.Format("2006-01-02")
+	tmp.PaymentDate = u.PaymentDate.Format("2006-01-02")
+	tmp.RecordDate = u.RecordDate.Format("2006-01-02")
+	tmp.Amount = fmt.Sprintf("%f", u.Amount)
+	return json.Marshal(tmp)
 }
 
 // Validate satisfies the Validator interface.

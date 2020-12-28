@@ -14,22 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// +build !integration
-
-package core_test
+package rest_test
 
 import (
-	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onwsk8r/goiex/internal/api"
+	"github.com/onwsk8r/goiex/pkg/core/market"
+	"github.com/onwsk8r/goiex/pkg/core/stock"
+
+	. "github.com/onwsk8r/goiex/pkg/rest"
 )
 
-var _ = BeforeSuite(func() {
-	var err error
-	client, err = api.NewClient("pk_sometoken", "")
-	Expect(err).ToNot(HaveOccurred())
-})
+var _ = Describe("Market", func() {
+	var m *Market
 
-var _ = BeforeEach(httpmock.Activate)
-var _ = AfterEach(httpmock.DeactivateAndReset)
+	BeforeEach(func() {
+		m = NewMarket(client)
+		Expect(m).ToNot(BeNil())
+	})
+
+	Describe("UpcomingDividends", GetAndVerify("/v1/stock/NGL/upcoming-dividends", market.GoldenUpcomingDividends(),
+		func() (interface{}, error) { return m.UpcomingDividends(ctx, "NGL") }))
+
+	Describe("UpcomingSplits", GetAndVerify("/v1/stock/AAPL/upcoming-splits", stock.GoldenSplit(),
+		func() (interface{}, error) { return m.UpcomingSplits(ctx, "AAPL") }))
+})
