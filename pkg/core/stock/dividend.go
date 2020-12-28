@@ -97,8 +97,8 @@ func (d *Dividend) MarshalJSON() ([]byte, error) {
 	tmp.ExDate = d.ExDate.Format("2006-01-02")
 	tmp.PaymentDate = d.PaymentDate.Format("2006-01-02")
 	tmp.RecordDate = d.RecordDate.Format("2006-01-02")
-	tmp.Date = d.Date.UnixNano() / 1e6    // nolint:gomnd
-	tmp.Updated = d.Date.UnixNano() / 1e6 // nolint:gomnd
+	tmp.Date = d.Date.UnixNano() / 1e6       // nolint:gomnd
+	tmp.Updated = d.Updated.UnixNano() / 1e6 // nolint:gomnd
 	return json.Marshal(tmp)
 }
 
