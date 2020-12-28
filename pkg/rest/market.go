@@ -14,29 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package core
+package rest
 
 import (
 	"context"
-	"encoding/json"
-	"io"
-	"net/url"
 
-	"github.com/rs/zerolog/log"
-
+	"github.com/go-resty/resty/v2"
 	"github.com/onwsk8r/goiex/pkg/core/market"
-	"github.com/onwsk8r/goiex/pkg/iexcloud"
+	"github.com/onwsk8r/goiex/pkg/core/stock"
 )
 
 // Market exposes methods for accessing IEX Cloud market information.
 // A list of endpoints can be found at https://iexcloud.io/docs/api/#market-info.
 type Market struct {
-	client iexcloud.Client
+	client *resty.Client
 }
 
 // NewMarket creates a new Market with the given client
-func NewMarket(client iexcloud.Client) *Market {
-	log.Trace().Msg("instantiating new core.Market")
+func NewMarket(client *resty.Client) *Market {
 	return &Market{
 		client: client,
 	}
@@ -47,10 +42,9 @@ func NewMarket(client iexcloud.Client) *Market {
 // https://iexcloud.io/docs/api/#upcoming-events
 func (m *Market) UpcomingDividends(ctx context.Context,
 	symbol string) (dividends []market.UpcomingDividend, err error) {
-	uri := []string{"stock", symbol, "upcoming-dividends"}
-	err = m.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
-		return json.NewDecoder(r).Decode(&dividends)
-	})
+	var params = map[string]string{"symbol": symbol}
+	_, err = m.client.R().SetContext(ctx).SetPathParams(params).SetResult(&dividends).
+		Get("/{version}/stock/{symbol}/upcoming-dividends")
 	return
 }
 
@@ -58,20 +52,18 @@ func (m *Market) UpcomingDividends(ctx context.Context,
 // Pass "market" as the symbol parameter to return data for all symbols.
 // https://iexcloud.io/docs/api/#upcoming-events
 func (m *Market) UpcomingEarnings(ctx context.Context, symbol string) (earnings []market.UpcomingEarning, err error) {
-	uri := []string{"stock", symbol, "upcoming-earnings"}
-	err = m.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
-		return json.NewDecoder(r).Decode(&earnings)
-	})
+	var params = map[string]string{"symbol": symbol}
+	_, err = m.client.R().SetContext(ctx).SetPathParams(params).SetResult(&earnings).
+		Get("/{version}/stock/{symbol}/upcoming-earnings")
 	return
 }
 
 // UpcomingSplits fetches a list of upcoming earnings from the upcoming events endpoint.
 // Pass "market" as the symbol parameter to return data for all symbols.
 // https://iexcloud.io/docs/api/#upcoming-events
-func (m *Market) UpcomingSplits(ctx context.Context, symbol string) (splits []market.UpcomingSplit, err error) {
-	uri := []string{"stock", symbol, "upcoming-splits"}
-	err = m.client.Get(ctx, uri, url.Values{}, func(r io.ReadCloser) error {
-		return json.NewDecoder(r).Decode(&splits)
-	})
+func (m *Market) UpcomingSplits(ctx context.Context, symbol string) (splits []stock.Split, err error) {
+	var params = map[string]string{"symbol": symbol}
+	_, err = m.client.R().SetContext(ctx).SetPathParams(params).SetResult(&splits).
+		Get("/{version}/stock/{symbol}/upcoming-splits")
 	return
 }

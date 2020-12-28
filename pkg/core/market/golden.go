@@ -16,7 +16,9 @@
 
 package market
 
-import "github.com/onwsk8r/goiex/test/helper"
+import (
+	"github.com/onwsk8r/goiex/test/helper"
+)
 
 // GoldenUpcomingDividends returns golden data for the UpcomingDividend type
 func GoldenUpcomingDividends() (d []UpcomingDividend) {
@@ -27,11 +29,5 @@ func GoldenUpcomingDividends() (d []UpcomingDividend) {
 // GoldenUpcomingEarnings returns golden data for the UpcomingEarning type
 func GoldenUpcomingEarnings() (e []UpcomingEarning) {
 	helper.FromGolden("upcoming_earnings", &e)
-	return
-}
-
-// GoldenUpcomingSplits returns golden data for the UpcomingSplit type
-func GoldenUpcomingSplits() (s []UpcomingSplit) {
-	helper.FromGolden("upcoming_splits", &s)
 	return
 }
