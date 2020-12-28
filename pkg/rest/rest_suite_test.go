@@ -40,7 +40,7 @@ func TestRest(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	client = NewClient("sk_sometoken", log.Ctx(ctx))
+	client = NewClient("sk_sometoken", &log.Logger)
 	httpmock.ActivateNonDefault(client.GetClient())
 })
 
