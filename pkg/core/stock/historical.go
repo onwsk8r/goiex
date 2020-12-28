@@ -37,8 +37,8 @@ type Historical struct {
 	Source               string    `json:"source,omitempty"`
 	Key                  string    `json:"key,omitempty"`
 	Subkey               string    `json:"subkey,omitempty"`
-	Date                 time.Time `json:"date,omitempty"`
-	Updated              time.Time `json:"updated,omitempty"`
+	Date                 time.Time `json:"-"`
+	Updated              time.Time `json:"-"`
 	ChangeOverTime       float64   `json:"changeOverTime,omitempty"`
 	MarketChangeOverTime float64   `json:"marketChangeOverTime,omitempty"`
 	UOpen                float64   `json:"uOpen,omitempty"`
@@ -70,13 +70,27 @@ func (h *Historical) UnmarshalJSON(data []byte) (err error) {
 	tmp := new(embedded)
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*h = Historical(tmp.historical)
-		// Ignore date parsing issues, which will happen especially on PreviousDayMarket
-		// calls where some array objects may be empty (ie "{}")
 		h.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)          // nolint:gomnd
 		h.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6) // nolint:gomnd
 		log.Debug().Interface("original", tmp).Interface("final", h).Msg("historical: parsed date")
 	}
 	return
+}
+
+// MarshalJSON satisfies the json.Marshaler interface.
+// It undoes what UnmarshalJSON does.
+func (h *Historical) MarshalJSON() ([]byte, error) {
+	type historical Historical
+	type embedded struct {
+		historical
+		Date    int64 `json:"date,omitempty"`
+		Updated int64 `json:"updated,omitempty"`
+	}
+	tmp := new(embedded)
+	tmp.historical = historical(*h)
+	tmp.Date = h.Date.UnixNano() / 1e6       // nolint:gomnd
+	tmp.Updated = h.Updated.UnixNano() / 1e6 // nolint:gomnd
+	return json.Marshal(tmp)
 }
 
 // Validate satisfies the Validator interface.
