@@ -68,14 +68,38 @@ func (d *Dividend) UnmarshalJSON(data []byte) (err error) {
 	}
 	*d = Dividend(tmp.dividend)
 	// Ignore date parsing issues in case one or more dates are missing
-	d.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
-	d.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint: errcheck
-	d.PaymentDate, _ = time.Parse("2006-01-02", tmp.PaymentDate)   // nolint: errcheck
-	d.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint: errcheck
+	d.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint:errcheck
+	d.ExDate, _ = time.Parse("2006-01-02", tmp.ExDate)             // nolint:errcheck
+	d.PaymentDate, _ = time.Parse("2006-01-02", tmp.PaymentDate)   // nolint:errcheck
+	d.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint:errcheck
 	d.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)           // nolint:gomnd
 	d.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)  // nolint:gomnd
 	log.Debug().Interface("original", tmp).Interface("final", d).Msg("dividend: parsed date")
 	return nil
+}
+
+// MarshalJSON satisfies the json.Marshaler interface.
+// It undoes what UnmarshalJSON does.
+func (d *Dividend) MarshalJSON() ([]byte, error) {
+	type dividend Dividend
+	type embedded struct {
+		dividend
+		DeclaredDate string `json:"declaredDate,omitempty"`
+		ExDate       string `json:"exDate,omitempty"`
+		PaymentDate  string `json:"paymentDate,omitempty"`
+		RecordDate   string `json:"recordDate,omitempty"`
+		Date         int64  `json:"date,omitempty"`
+		Updated      int64  `json:"updated,omitempty"`
+	}
+	tmp := new(embedded)
+	tmp.dividend = dividend(*d)
+	tmp.DeclaredDate = d.DeclaredDate.Format("2006-01-02")
+	tmp.ExDate = d.ExDate.Format("2006-01-02")
+	tmp.PaymentDate = d.PaymentDate.Format("2006-01-02")
+	tmp.RecordDate = d.RecordDate.Format("2006-01-02")
+	tmp.Date = d.Date.UnixNano() / 1e6    // nolint:gomnd
+	tmp.Updated = d.Date.UnixNano() / 1e6 // nolint:gomnd
+	return json.Marshal(tmp)
 }
 
 // Validate satisfies the Validator interface.

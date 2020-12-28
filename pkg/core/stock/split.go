@@ -72,6 +72,26 @@ func (s *Split) UnmarshalJSON(data []byte) (err error) { // nolint:dupl
 	return
 }
 
+// MarshalJSON satisfies the json.Marshaler interface.
+// It undoes what UnmarshalJSON does.
+func (s *Split) MarshalJSON() ([]byte, error) {
+	type split Split
+	type embedded struct {
+		split
+		ExDate       string `json:"exDate,omitempty"`
+		DeclaredDate string `json:"declaredDate,omitempty"`
+		Date         int64  `json:"date,omitempty"`
+		Updated      int64  `json:"updated,omitempty"`
+	}
+	tmp := new(embedded)
+	tmp.split = split(*s)
+	tmp.DeclaredDate = s.DeclaredDate.Format("2006-01-02")
+	tmp.ExDate = s.ExDate.Format("2006-01-02")
+	tmp.Date = s.Date.UnixNano() / 1e6       // nolint:gomnd
+	tmp.Updated = s.Updated.UnixNano() / 1e6 // nolint:gomnd
+	return json.Marshal(tmp)
+}
+
 // Validate satisfies the Validator interface.
 // It will return an error if the ExDate is equal to its zero value, or if the ToFactor or FromFactor are not positive.
 func (s *Split) Validate() error {

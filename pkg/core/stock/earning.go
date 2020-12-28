@@ -74,6 +74,26 @@ func (e *Earning) UnmarshalJSON(data []byte) (err error) { // nolint:dupl
 	return
 }
 
+// MarshalJSON satisfies the json.Marshaler interface.
+// It undoes what UnmarshalJSON does.
+func (e *Earning) MmarshalJSON() ([]byte, error) { // nolint:dupl
+	type earning Earning
+	type embedded struct {
+		earning
+		EPSReportDate string `json:"EPSReportDate"`
+		FiscalEndDate string `json:"fiscalEndDate"`
+		Date          int64  `json:"date,omitempty"`
+		Updated       int64  `json:"updated,omitempty"`
+	}
+	tmp := new(embedded)
+	tmp.earning = earning(*e)
+	tmp.EPSReportDate = e.EPSReportDate.Format("2006-01-02")
+	tmp.FiscalEndDate = e.FiscalEndDate.Format("2006-01-02")
+	tmp.Date = e.Date.UnixNano() / 1e6       //nolint:gomnd
+	tmp.Updated = e.Updated.UnixNano() / 1e6 // nolint:gomnd
+	return json.Marshal(tmp)
+}
+
 // Validate satisfies the Validator interface.
 // It will return an error if the ActualEPS, ConsensusEPS, or EPSReportDate fields are zero
 func (e *Earning) Validate() error {

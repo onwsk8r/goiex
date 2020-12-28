@@ -73,6 +73,20 @@ func (i *Intraday) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
+// MarshalJSON satisfies the json.Marshaler interface.
+// It undoes what UnmarshalJSON does.
+func (i *Intraday) MmarshalJSON() ([]byte, error) {
+	type intraday Intraday
+	type embedded struct {
+		intraday
+		Date string `json:"date"`
+	}
+	tmp := new(embedded)
+	tmp.intraday = intraday(*i)
+	tmp.Date = i.Date.Format("2006-01-02")
+	return json.Marshal(tmp)
+}
+
 // Validate satisfies the Validator interface.
 // It will return an error if the Date, Close or MarketClose fields are equal to their zero value.
 func (i *Intraday) Validate() error {
