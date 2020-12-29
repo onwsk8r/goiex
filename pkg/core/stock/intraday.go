@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Intraday represents a data point from the Intraday Prices endpoint.
@@ -68,7 +66,6 @@ func (i *Intraday) UnmarshalJSON(data []byte) (err error) {
 	var easternTime *time.Location
 	if easternTime, err = time.LoadLocation("America/New_York"); err == nil {
 		i.Date, err = time.ParseInLocation("2006-01-02T15:04", fmt.Sprintf("%sT%s", tmp.Date, tmp.Minute), easternTime)
-		log.Debug().Str("date", tmp.Date).Str("minute", tmp.Minute).Time("parsed", i.Date).Msg("intraday: parsed date")
 	}
 	return
 }

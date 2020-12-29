@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Historical represents a data point from the Historical Prices endpoint.
@@ -64,15 +62,14 @@ func (h *Historical) UnmarshalJSON(data []byte) (err error) {
 	type historical Historical
 	type embedded struct {
 		historical
-		Date    int64 `json:"date,omitempty"`
-		Updated int64 `json:"updated,omitempty"`
+		Date    string `json:"date,omitempty"`
+		Updated int64  `json:"updated,omitempty"`
 	}
 	tmp := new(embedded)
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*h = Historical(tmp.historical)
-		h.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)          // nolint:gomnd
+		h.Date, _ = time.Parse("2006-01-02", tmp.Date)                // nolint:errcheck
 		h.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6) // nolint:gomnd
-		log.Debug().Interface("original", tmp).Interface("final", h).Msg("historical: parsed date")
 	}
 	return
 }
@@ -83,12 +80,12 @@ func (h *Historical) MarshalJSON() ([]byte, error) {
 	type historical Historical
 	type embedded struct {
 		historical
-		Date    int64 `json:"date,omitempty"`
-		Updated int64 `json:"updated,omitempty"`
+		Date    string `json:"date,omitempty"`
+		Updated int64  `json:"updated,omitempty"`
 	}
 	tmp := new(embedded)
 	tmp.historical = historical(*h)
-	tmp.Date = h.Date.UnixNano() / 1e6       // nolint:gomnd
+	tmp.Date = h.Date.Format("2006-01-02")
 	tmp.Updated = h.Updated.UnixNano() / 1e6 // nolint:gomnd
 	return json.Marshal(tmp)
 }

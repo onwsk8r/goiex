@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Split represents a data point from the basic splits endpoint.
@@ -67,7 +65,6 @@ func (s *Split) UnmarshalJSON(data []byte) (err error) { // nolint:dupl
 		if tmp.Updated > 0 {
 			s.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6) // nolint:gomnd
 		}
-		log.Debug().Interface("original", tmp).Interface("final", s).Msg("split: parsed date")
 	}
 	return
 }

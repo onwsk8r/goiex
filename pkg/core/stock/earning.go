@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Earning represents a data point from the Earnings endpoint.
@@ -69,14 +67,13 @@ func (e *Earning) UnmarshalJSON(data []byte) (err error) { // nolint:dupl
 		e.FiscalEndDate, _ = time.Parse("2006-01-02", tmp.FiscalEndDate) // nolint:errcheck
 		e.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)             // nolint:gomnd
 		e.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)    // nolint:gomnd
-		log.Debug().Interface("original", tmp).Interface("final", e).Msg("earning: parsed dates")
 	}
 	return
 }
 
 // MarshalJSON satisfies the json.Marshaler interface.
 // It undoes what UnmarshalJSON does.
-func (e *Earning) MmarshalJSON() ([]byte, error) { // nolint:dupl
+func (e *Earning) MarshalJSON() ([]byte, error) { // nolint:dupl
 	type earning Earning
 	type embedded struct {
 		earning

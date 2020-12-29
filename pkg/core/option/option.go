@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Option represents a data point from the Options EOD endpoint.
@@ -95,7 +93,6 @@ func (o *Option) UnmarshalJSON(data []byte) (err error) {
 	o.LastTrade, _ = time.ParseInLocation("2006-01-02T15:04:05", val, time.UTC) // nolint:errcheck
 	o.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)                        // nolint:gomnd
 	o.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)               // nolint:gomnd
-	log.Debug().Interface("original", tmp).Interface("final", o).Msg("option: parsed dates")
 	return
 }
 
