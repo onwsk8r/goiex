@@ -59,7 +59,7 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-1.15-${{ hashFiles('go.sum') }}
       - run: go install github.com/onsi/ginkgo/ginkgo
-      - run: ginkgo --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress --compilers=1 --nodes=1 -tags "integration" pkg/rest
+      - run: ginkgo --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress --compilers=2 --nodes=1 -tags "integration" pkg/rest
         env:
           IEXCLOUD_TOKEN: ${{ secrets.IEXCLOUD_TOKEN }}
   tag:
