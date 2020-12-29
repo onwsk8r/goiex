@@ -19,10 +19,7 @@ package market
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // UpcomingDividend represents a data point from the upcoming events endpoint.
@@ -50,7 +47,6 @@ func (u *UpcomingDividend) UnmarshalJSON(data []byte) (err error) {
 	type dividend UpcomingDividend
 	type embedded struct {
 		dividend
-		Amount       string `json:"amount"`
 		ExDate       string `json:"exDate"`
 		PaymentDate  string `json:"paymentDate"`
 		RecordDate   string `json:"recordDate"`
@@ -66,8 +62,6 @@ func (u *UpcomingDividend) UnmarshalJSON(data []byte) (err error) {
 	u.PaymentDate, _ = time.Parse("2006-01-02", tmp.PaymentDate)   // nolint: errcheck
 	u.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint: errcheck
 	u.DeclaredDate, _ = time.Parse("2006-01-02", tmp.DeclaredDate) // nolint: errcheck
-	u.Amount, _ = strconv.ParseFloat(tmp.Amount, 64)               // nolint: errcheck
-	log.Debug().Interface("orig", tmp).Interface("parsed", u).Msg("upcoming_dividend: parsed date")
 	return nil
 }
 
@@ -77,7 +71,6 @@ func (u *UpcomingDividend) MarshalJSON() ([]byte, error) {
 	type dividend UpcomingDividend
 	type embedded struct {
 		dividend
-		Amount       string `json:"amount"`
 		ExDate       string `json:"exDate,omitempty"`
 		PaymentDate  string `json:"paymentDate,omitempty"`
 		RecordDate   string `json:"recordDate,omitempty"`
@@ -89,7 +82,6 @@ func (u *UpcomingDividend) MarshalJSON() ([]byte, error) {
 	tmp.ExDate = u.ExDate.Format("2006-01-02")
 	tmp.PaymentDate = u.PaymentDate.Format("2006-01-02")
 	tmp.RecordDate = u.RecordDate.Format("2006-01-02")
-	tmp.Amount = fmt.Sprintf("%f", u.Amount)
 	return json.Marshal(tmp)
 }
 
