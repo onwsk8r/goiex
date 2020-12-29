@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Symbol represents one datum of that returned by the ref-data/symbols endpoint.
@@ -29,7 +27,7 @@ type Symbol struct {
 	Symbol   string    `json:"symbol"`
 	Name     string    `json:"name"`
 	Exchange string    `json:"exchange"`
-	IEXID    string    `json:"iexid"`
+	IEXID    string    `json:"iexId"`
 	Currency string    `json:"currency"`
 	Date     time.Time `json:"-"`
 	Type     string    `json:"type"`
@@ -52,7 +50,6 @@ func (s *Symbol) UnmarshalJSON(data []byte) (err error) {
 	if err = json.Unmarshal(data, tmp); err == nil {
 		*s = Symbol(tmp.symbol)
 		s.Date, err = time.Parse("2006-01-02", tmp.Date)
-		log.Debug().Str("original", tmp.Date).Time("parsed", s.Date).Msg("symbol: parsed date")
 	}
 	return
 }
@@ -78,8 +75,8 @@ func (s *Symbol) Validate() error {
 	switch {
 	case s.Symbol == "":
 		return fmt.Errorf("missing symbol")
-	case s.IEXID == "":
-		return fmt.Errorf("missing IEX ID")
+	case s.CIK == "":
+		return fmt.Errorf("missing CIK")
 	case s.Date.IsZero():
 		return fmt.Errorf("missing date")
 	}
