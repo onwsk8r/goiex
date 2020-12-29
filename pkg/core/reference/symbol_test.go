@@ -84,9 +84,9 @@ var _ = Describe("Symbol", func() {
 			s.Symbol = ""
 			Expect(s.Validate()).To(MatchError("missing symbol"))
 		})
-		It("should return an error if the IEXID is empty", func() {
-			s.IEXID = ""
-			Expect(s.Validate()).To(MatchError("missing IEX ID"))
+		It("should return an error if the CIK is empty", func() {
+			s.CIK = ""
+			Expect(s.Validate()).To(MatchError("missing CIK"))
 		})
 		It("should return an error if the Date is zero valued", func() {
 			s.Date = time.Time{}
