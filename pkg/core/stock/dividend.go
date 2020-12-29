@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Dividend represents a data point from the basic dividends endpoint.
@@ -74,7 +72,6 @@ func (d *Dividend) UnmarshalJSON(data []byte) (err error) {
 	d.RecordDate, _ = time.Parse("2006-01-02", tmp.RecordDate)     // nolint:errcheck
 	d.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)           // nolint:gomnd
 	d.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)  // nolint:gomnd
-	log.Debug().Interface("original", tmp).Interface("final", d).Msg("dividend: parsed date")
 	return nil
 }
 

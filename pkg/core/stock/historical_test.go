@@ -39,7 +39,7 @@ var _ = Describe("Historical", func() { // nolint: dupl
 			Volume:  46691331,
 			ID:      "HISTORICAL_PRICES",
 			Key:     "AAPL",
-			Date:    time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
+			Date:    time.Date(2020, time.November, 30, 0, 0, 0, 0, time.UTC),
 			Updated: time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
 			UOpen:   116.57,
 			UHigh:   117.49,

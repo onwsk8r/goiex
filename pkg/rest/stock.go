@@ -53,14 +53,22 @@ var (
 type HistoricalIntradayPeriod string
 
 var (
-	HistoricalIntradayPeriodDate HistoricalIntradayPeriod = "date"
 	HistoricalIntradayPeriod1mm  HistoricalIntradayPeriod = "1mm"
+	HistoricalIntradayPeriod5dm  HistoricalIntradayPeriod = "5dm"
+	HistoricalIntradayPeriodDate HistoricalIntradayPeriod = "date"
 )
 
 type SplitsPeriod string
 
 var (
-	SplitsPeriod5y SplitsPeriod = "5y"
+	SplitsPeriod5y   SplitsPeriod = "5y"
+	SplitsPeriod2y   SplitsPeriod = "2y"
+	SplitsPeriod1y   SplitsPeriod = "1y"
+	SplitsPeriodYTD  SplitsPeriod = "ytd"
+	SplitsPeriod6m   SplitsPeriod = "6m"
+	SplitsPeriod3m   SplitsPeriod = "3m"
+	SplitsPeriod1m   SplitsPeriod = "1m"
+	SplitsPeriodNext SplitsPeriod = "next"
 )
 
 // Stock exposes methods for calling Stock endoints.
@@ -89,7 +97,11 @@ func (s *Stock) Dividends(ctx context.Context, symbol string,
 // Available quarterly (last 4 quarters) and annually (last 4 years).
 // https://iexcloud.io/docs/api/#earnings
 func (s *Stock) Earnings(ctx context.Context, symbol string,
-	params map[string]string) (res []stock.Earning, err error) {
+	params map[string]string) (earnings []stock.Earning, err error) {
+	var res = struct {
+		Symbol   string           `json:"symbol"`
+		Earnings *[]stock.Earning `json:"earnings"`
+	}{Earnings: &earnings}
 	var pathParams = map[string]string{"symbol": symbol}
 	_, err = s.client.R().SetContext(ctx).SetPathParams(pathParams).SetQueryParams(params).
 		SetResult(&res).Get("/{version}/stock/{symbol}/earnings")
@@ -106,6 +118,9 @@ func (s *Stock) Historical(ctx context.Context, symbol string, period Historical
 	return
 }
 
+// HistoricalIntraday returns historical intraday data.
+// https://iexcloud.io/docs/api/#historical-prices
+// See also https://iexcloud.io/docs/api/#intraday-prices
 func (s *Stock) HistoricalIntraday(ctx context.Context, symbol string, period HistoricalIntradayPeriod,
 	params map[string]string) (res []stock.Intraday, err error) {
 	var pathParams = map[string]string{"symbol": symbol, "range": string(period)}
@@ -123,11 +138,15 @@ func (s *Stock) PreviousDay(ctx context.Context, symbol string) (res *stock.Hist
 	return
 }
 
+// PreviousDayMarket returns previous day adjusted price data for all stocks.
+// https://iexcloud.io/docs/api/#previous-day-price
 func (s *Stock) PreviousDayMarket(ctx context.Context) (res []stock.Historical, err error) {
 	_, err = s.client.R().SetContext(ctx).SetResult(&res).Get("/{version}/stock/market/previous")
 	return
 }
 
+// Splits provides basic split data for US equities, ETFs, and Mutual Funds for the last 5 years.
+// https://iexcloud.io/docs/api/#splits-basic
 func (s *Stock) Splits(ctx context.Context, symbol string,
 	period SplitsPeriod) (res []stock.Split, err error) {
 	var params = map[string]string{"symbol": symbol, "range": string(period)}
