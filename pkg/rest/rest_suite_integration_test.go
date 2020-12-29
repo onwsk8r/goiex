@@ -13,13 +13,14 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// +build !integration
+// +build integration
 
 package rest_test
 
 import (
 	"context"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/go-resty/resty/v2"
@@ -41,12 +42,12 @@ func TestRest(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	client = NewClient("sk_sometoken", &log.Logger)
-	httpmock.ActivateNonDefault(client.GetClient())
+	token, ok := os.LookupEnv("IEXCLOUD_TOKEN")
+	if !ok {
+		Fail("environment variable IEXCLOUD_TOKEN must be set")
+	}
+	client = NewClient(token, &log.Logger)
 })
-
-var _ = BeforeEach(httpmock.Reset)
-var _ = AfterSuite(httpmock.DeactivateAndReset)
 
 func GetAndVerify(url string, expected interface{}, f func() (interface{}, error)) func() {
 	return func() {
