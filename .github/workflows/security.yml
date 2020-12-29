@@ -3,7 +3,10 @@
 # Visit https://slscan.io/en/latest/ for help
 name: Security
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
   scan:
