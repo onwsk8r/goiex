@@ -92,9 +92,9 @@ func (o *Option) UnmarshalJSON(data []byte) (err error) {
 		return
 	}
 	val := fmt.Sprintf("%sT%s", tmp.LastTradeDate, tmp.LastTradeTime)
-	o.LastTrade, err = time.ParseInLocation("2006-01-02T15:04:05", val, time.UTC)
-	o.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)          // nolint:gomnd
-	o.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6) // nolint:gomnd
+	o.LastTrade, _ = time.ParseInLocation("2006-01-02T15:04:05", val, time.UTC) // nolint:errcheck
+	o.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)                        // nolint:gomnd
+	o.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)               // nolint:gomnd
 	log.Debug().Interface("original", tmp).Interface("final", o).Msg("option: parsed dates")
 	return
 }
@@ -125,6 +125,8 @@ func (o *Option) MarshalJSON() ([]byte, error) {
 // It will return an error if the Date, Close or UClose fields are equal to their zero value.
 func (o *Option) Validate() error {
 	switch {
+	case o.LastUpdated.IsZero():
+		return fmt.Errorf("missing last updated")
 	case o.Symbol == "":
 		return fmt.Errorf("missing symbol")
 	case o.ID == "":
@@ -133,6 +135,8 @@ func (o *Option) Validate() error {
 		return fmt.Errorf("missing expiration date")
 	case o.StrikePrice == 0:
 		return fmt.Errorf("strike price is zero")
+	case o.Side == "":
+		return fmt.Errorf("missing option side")
 	}
 	return nil
 }
