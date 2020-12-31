@@ -34,16 +34,16 @@ var _ = Describe("Earning", func() {
 			EPSReportDate:            time.Date(2020, time.October, 22, 0, 0, 0, 0, time.UTC),
 			EPSSurpriseDollar:        0.330098697767743855,
 			EPSSurpriseDollarPercent: 0.1440300992341432,
-			ActualEPS:                5.07,
+			ActualEPS:                func(i float64) *float64 { return &i }(5.07),
 			AnnounceTime:             "AMC",
-			ConsensusEPS:             2.703327,
+			ConsensusEPS:             func(i float64) *float64 { return &i }(2.703327),
 			Currency:                 "USD",
 			FiscalEndDate:            time.Date(2020, time.September, 18, 0, 0, 0, 0, time.UTC),
 			FiscalPeriod:             "Q4 2020",
 			NumberOfEstimates:        31,
 			PeriodType:               "quarterly",
 			Symbol:                   "AAPL",
-			YearAgo:                  4.7006,
+			YearAgo:                  func(i float64) *float64 { return &i }(4.7006),
 			YearAgoChangePercent:     -0.7303425659240847,
 			ID:                       "PREMIUM_EARNINGS",
 			Key:                      "AAPL",
@@ -75,7 +75,7 @@ var _ = Describe("Earning", func() {
 			Expect(expected[0].Validate()).To(Succeed())
 		})
 		It("should return an error if the ActualEPS is zero valued", func() {
-			expected[0].ActualEPS = 0
+			expected[0].ActualEPS = nil
 			Expect(expected[0].Validate()).To(MatchError("actual EPS is zero"))
 		})
 		It("should return an error if the ReportDate is zero valued", func() {

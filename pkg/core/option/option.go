@@ -28,38 +28,38 @@ import (
 // the price was updated, where Updated looks to be the timestamp of the
 // last release, which may be the next morning after LastUpdated
 type Option struct {
-	Ask                 *float64  `json:"ask,omitempty"`
-	Bid                 *float64  `json:"bid,omitempty"`
-	CFICode             string    `json:"cfiCode,omitempty"`
-	Close               *float64  `json:"close,omitempty"`
-	ClosingPrice        *float64  `json:"closingPrice,omitempty"`
-	ContractDescription string    `json:"contractDescription,omitempty"`
-	ContractName        string    `json:"contractName,omitempty"`
-	ContractSize        float64   `json:"contractSize,omitempty"`
-	Currency            string    `json:"currency,omitempty"`
-	ExchangeCode        string    `json:"exchangeCode,omitempty"`
-	ExchangeMIC         string    `json:"exchangeMIC,omitempty"`
-	ExerciseStyle       string    `json:"exerciseStyle,omitempty"`
-	ExpirationDate      time.Time `json:"-"`
-	FIGI                string    `json:"figi,omitempty"`
-	High                *float64  `json:"high,omitempty"`
-	IsAdjusted          bool      `json:"isAdjusted,omitempty"`
+	Ask                 *float64  `json:"ask,omitempty" gorm:"type:double precision"`
+	Bid                 *float64  `json:"bid,omitempty" gorm:"type:double precision"`
+	CFICode             string    `json:"cfiCode,omitempty" gorm:"type:character varying"`
+	Close               *float64  `json:"close,omitempty" gorm:"type:double precision"`
+	ClosingPrice        *float64  `json:"closingPrice,omitempty" gorm:"type:double precision"`
+	ContractDescription string    `json:"contractDescription,omitempty" gorm:"type:character varying"`
+	ContractName        string    `json:"contractName,omitempty" gorm:"type:character varying"`
+	ContractSize        float64   `json:"contractSize,omitempty" gorm:"type:double precision"`
+	Currency            string    `json:"currency,omitempty" gorm:"type:character varying"`
+	ExchangeCode        string    `json:"exchangeCode,omitempty" gorm:"type:character varying"`
+	ExchangeMIC         string    `json:"exchangeMIC,omitempty" gorm:"type:character varying"`
+	ExerciseStyle       string    `json:"exerciseStyle,omitempty" gorm:"type:character varying"`
+	FIGI                string    `json:"figi,omitempty" gorm:"type:character varying"`
+	High                *float64  `json:"high,omitempty" gorm:"type:double precision"`
 	LastTrade           time.Time `json:"-"`
-	LastUpdated         time.Time `json:"lastUpdated,omitempty"`
-	Low                 *float64  `json:"low,omitempty"`
-	MarginPrice         *float64  `json:"marginPrice,omitempty"`
-	Open                *float64  `json:"open,omitempty"`
-	OpenInterest        *uint     `json:"openInterest,omitempty"`
-	SettlementPrice     *float64  `json:"settlementPrice,omitempty"`
-	Side                string    `json:"side,omitempty"`
-	StrikePrice         float64   `json:"strikePrice,omitempty"`
-	Symbol              string    `json:"symbol,omitempty"`
-	Type                string    `json:"type,omitempty"`
+	LastUpdated         time.Time `json:"lastUpdated,omitempty" gorm:"primaryKey;type:date"`
+	Low                 *float64  `json:"low,omitempty" gorm:"type:double precision"`
+	MarginPrice         *float64  `json:"marginPrice,omitempty" gorm:"type:double precision"`
+	Open                *float64  `json:"open,omitempty" gorm:"type:double precision"`
+	OpenInterest        *uint     `json:"openInterest,omitempty" gorm:"type:double precision"`
+	SettlementPrice     *float64  `json:"settlementPrice,omitempty" gorm:"type:double precision"`
+	Symbol              string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	ExpirationDate      time.Time `json:"-" gorm:"primaryKey;type:date"`
+	StrikePrice         float64   `json:"strikePrice,omitempty" gorm:"primaryKey;type:double precision"`
+	Side                string    `json:"side,omitempty" gorm:"primaryKey;type:character varying"`
+	IsAdjusted          bool      `json:"isAdjusted,omitempty" gorm:"primaryKey"`
+	Type                string    `json:"type,omitempty" gorm:"type:character varying"`
 	Volume              *uint     `json:"volume,omitempty"`
-	ID                  string    `json:"id,omitempty"`
-	Key                 string    `json:"key,omitempty"`
-	Subkey              string    `json:"subkey,omitempty"`
-	Date                time.Time `json:"-"`
+	ID                  string    `json:"id,omitempty" gorm:"-"`
+	Key                 string    `json:"key,omitempty" gorm:"-"`
+	Subkey              string    `json:"subkey,omitempty" gorm:"-"`
+	Date                time.Time `json:"-" gorm:"type:date"`
 	Updated             time.Time `json:"-"`
 }
 

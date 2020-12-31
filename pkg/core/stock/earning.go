@@ -25,25 +25,25 @@ import (
 // Earning represents a data point from the Earnings endpoint.
 // https://iexcloud.io/docs/api/#earnings
 type Earning struct {
-	EPSReportDate            time.Time `json:"EPSReportDate,omitempty"`
-	EPSSurpriseDollar        float64   `json:"EPSSurpriseDollar,omitempty"`
-	EPSSurpriseDollarPercent float64   `json:"EPSSurpriseDollarPercent,omitempty"`
-	ActualEPS                float64   `json:"actualEPS,omitempty"`
-	AnnounceTime             string    `json:"announceTime,omitempty"` // TODO: BTO, DMT, AMC
-	ConsensusEPS             float64   `json:"consensusEPS,omitempty"`
-	Currency                 string    `json:"currency,omitempty"`
-	FiscalEndDate            time.Time `json:"fiscalEndDate,omitempty"`
-	FiscalPeriod             string    `json:"fiscalPeriod,omitempty"`
+	Symbol                   string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	EPSReportDate            time.Time `json:"EPSReportDate,omitempty" gorm:"primaryKey;type:date"`
+	EPSSurpriseDollar        float64   `json:"EPSSurpriseDollar,omitempty" gorm:"type:double precision"`
+	EPSSurpriseDollarPercent float64   `json:"EPSSurpriseDollarPercent,omitempty" gorm:"type:double precision"`
+	ActualEPS                *float64  `json:"actualEPS,omitempty" gorm:"type:double precision"`
+	AnnounceTime             string    `json:"announceTime,omitempty" gorm:"type:character varying"` // TODO: BTO, DMT, AMC
+	ConsensusEPS             *float64  `json:"consensusEPS,omitempty" gorm:"type:double precision"`
+	Currency                 string    `json:"currency,omitempty" gorm:"type:character varying"`
+	FiscalEndDate            time.Time `json:"fiscalEndDate,omitempty" gorm:"type:date"`
+	FiscalPeriod             string    `json:"fiscalPeriod,omitempty" gorm:"type:character varying"`
 	NumberOfEstimates        int       `json:"numberOfEstimates,omitempty"`
-	PeriodType               string    `json:"periodType,omitempty"`
-	Symbol                   string    `json:"symbol,omitempty"`
-	YearAgo                  float64   `json:"yearAgo,omitempty"`
-	YearAgoChangePercent     float64   `json:"yearAgoChangePercent,omitempty"`
-	ID                       string    `json:"id,omitempty"`
-	Source                   string    `json:"source,omitempty"`
-	Key                      string    `json:"key,omitempty"`
-	Subkey                   string    `json:"subkey,omitempty"`
-	Date                     time.Time `json:"date,omitempty"`
+	PeriodType               string    `json:"periodType,omitempty" gorm:"type:character varying"`
+	YearAgo                  *float64  `json:"yearAgo,omitempty" gorm:"type:double precision"`
+	YearAgoChangePercent     float64   `json:"yearAgoChangePercent,omitempty" gorm:"type:double precision"`
+	ID                       string    `json:"id,omitempty" gorm:"-"`
+	Source                   string    `json:"source,omitempty" gorm:"-"`
+	Key                      string    `json:"key,omitempty" gorm:"-"`
+	Subkey                   string    `json:"subkey,omitempty" gorm:"-"`
+	Date                     time.Time `json:"date,omitempty" gorm:"type:date"`
 	Updated                  time.Time `json:"updated,omitempty"`
 }
 
@@ -95,7 +95,7 @@ func (e *Earning) MarshalJSON() ([]byte, error) { // nolint:dupl
 // It will return an error if the ActualEPS, ConsensusEPS, or EPSReportDate fields are zero
 func (e *Earning) Validate() error {
 	switch {
-	case e.ActualEPS == 0:
+	case e.ActualEPS == nil:
 		return fmt.Errorf("actual EPS is zero")
 	case e.EPSReportDate.IsZero():
 		return fmt.Errorf("report date is missing")

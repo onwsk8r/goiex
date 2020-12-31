@@ -25,33 +25,33 @@ import (
 // Historical represents a data point from the Historical Prices endpoint.
 // https://iexcloud.io/docs/api/#historical-prices
 type Historical struct {
-	Close                float64   `json:"close,omitempty"`
-	High                 float64   `json:"high,omitempty"`
-	Low                  float64   `json:"low,omitempty"`
-	Open                 float64   `json:"open,omitempty"`
-	Symbol               string    `json:"symbol,omitempty"`
-	Volume               float64   `json:"volume,omitempty"`
-	ID                   string    `json:"id,omitempty"`
-	Source               string    `json:"source,omitempty"`
-	Key                  string    `json:"key,omitempty"`
-	Subkey               string    `json:"subkey,omitempty"`
-	Date                 time.Time `json:"-"`
+	Close                float64   `json:"close,omitempty" gorm:"type:double precision"`
+	High                 float64   `json:"high,omitempty" gorm:"type:double precision"`
+	Low                  float64   `json:"low,omitempty" gorm:"type:double precision"`
+	Open                 float64   `json:"open,omitempty" gorm:"type:double precision"`
+	Symbol               string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	Volume               *float64  `json:"volume,omitempty" gorm:"type:double precision"`
+	ID                   string    `json:"id,omitempty" gorm:"-"`
+	Source               string    `json:"source,omitempty" gorm:"-"`
+	Key                  string    `json:"key,omitempty" gorm:"-"`
+	Subkey               string    `json:"subkey,omitempty" gorm:"-"`
+	Date                 time.Time `json:"-" gorm:"primaryKey"`
 	Updated              time.Time `json:"-"`
-	ChangeOverTime       float64   `json:"changeOverTime,omitempty"`
-	MarketChangeOverTime float64   `json:"marketChangeOverTime,omitempty"`
-	UOpen                float64   `json:"uOpen,omitempty"`
-	UHigh                float64   `json:"uHigh,omitempty"`
-	ULow                 float64   `json:"uLow,omitempty"`
-	UClose               float64   `json:"uClose,omitempty"`
-	UVolume              uint      `json:"uVolume,omitempty"`
-	FOpen                float64   `json:"fOpen,omitempty"`
-	FHigh                float64   `json:"fHigh,omitempty"`
-	FLow                 float64   `json:"fLow,omitempty"`
-	FClose               float64   `json:"fClose,omitempty"`
-	FVolume              float64   `json:"fVolume,omitempty"`
-	Label                string    `json:"label,omitempty"`
-	Change               float64   `json:"change,omitempty"`
-	ChangePercent        float64   `json:"changePercent,omitempty"`
+	ChangeOverTime       *float64  `json:"changeOverTime,omitempty" gorm:"type:double precision"`
+	MarketChangeOverTime *float64  `json:"marketChangeOverTime,omitempty" gorm:"type:double precision"`
+	UOpen                float64   `json:"uOpen,omitempty" gorm:"type:double precision"`
+	UHigh                float64   `json:"uHigh,omitempty" gorm:"type:double precision"`
+	ULow                 float64   `json:"uLow,omitempty" gorm:"type:double precision"`
+	UClose               float64   `json:"uClose,omitempty" gorm:"type:double precision"`
+	UVolume              *float64  `json:"uVolume,omitempty" gorm:"type:double precision"`
+	FOpen                float64   `json:"fOpen,omitempty" gorm:"type:double precision"`
+	FHigh                float64   `json:"fHigh,omitempty" gorm:"type:double precision"`
+	FLow                 float64   `json:"fLow,omitempty" gorm:"type:double precision"`
+	FClose               float64   `json:"fClose,omitempty" gorm:"type:double precision"`
+	FVolume              *float64  `json:"fVolume,omitempty" gorm:"type:double precision"`
+	Label                string    `json:"label,omitempty" gorm:"type:character varying"`
+	Change               *float64  `json:"change,omitempty" gorm:"type:double precision"`
+	ChangePercent        *float64  `json:"changePercent,omitempty" gorm:"type:double precision"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.

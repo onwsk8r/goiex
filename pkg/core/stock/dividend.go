@@ -26,22 +26,22 @@ import (
 // Note the refid field exists in the sample data but not in the schema docs.
 // https://iexcloud.io/docs/api/#dividends-basic
 type Dividend struct {
-	Amount       float64   `json:"amount,omitempty"`
-	Currency     string    `json:"currency,omitempty"`
-	DeclaredDate time.Time `json:"declaredDate,omitempty"`
-	Description  string    `json:"description,omitempty"`
-	ExDate       time.Time `json:"exDate,omitempty"`
-	Flag         string    `json:"flag,omitempty"`
-	Frequency    string    `json:"frequency,omitempty"`
-	PaymentDate  time.Time `json:"paymentDate,omitempty"`
-	RecordDate   time.Time `json:"recordDate,omitempty"`
-	RefID        float64   `json:"refid,omitempty"`
-	Symbol       string    `json:"symbol,omitempty"`
-	ID           string    `json:"id,omitempty"`
-	Source       string    `json:"source,omitempty"`
-	Key          string    `json:"key,omitempty"`
-	Subkey       string    `json:"subkey,omitempty"`
-	Date         time.Time `json:"date,omitempty"`
+	Symbol       string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	Amount       float64   `json:"amount,omitempty" gorm:"type:double precision"`
+	Currency     string    `json:"currency,omitempty" gorm:"type:character varying"`
+	DeclaredDate time.Time `json:"declaredDate,omitempty" gorm:"type:date"`
+	Description  string    `json:"description,omitempty" gorm:"type:character varying"`
+	ExDate       time.Time `json:"exDate,omitempty" gorm:"primaryKey;type:date"`
+	Flag         string    `json:"flag,omitempty" gorm:"type:character varying"`
+	Frequency    string    `json:"frequency,omitempty" gorm:"type:character varying"`
+	PaymentDate  time.Time `json:"paymentDate,omitempty" gorm:"type:date"`
+	RecordDate   time.Time `json:"recordDate,omitempty" gorm:"type:date"`
+	RefID        float64   `json:"refid,omitempty" gorm:"-"`
+	ID           string    `json:"id,omitempty" gorm:"-"`
+	Source       string    `json:"source,omitempty" gorm:"-"`
+	Key          string    `json:"key,omitempty" gorm:"-"`
+	Subkey       string    `json:"subkey,omitempty" gorm:"-"`
+	Date         time.Time `json:"date,omitempty" gorm:"type:date"`
 	Updated      time.Time `json:"updated,omitempty"`
 }
 
