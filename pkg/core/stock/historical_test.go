@@ -31,27 +31,31 @@ var _ = Describe("Historical", func() { // nolint: dupl
 	var expected []Historical
 	BeforeEach(func() {
 		expected = []Historical{{
-			Close:   116.59,
-			High:    117.49,
-			Low:     116.22,
-			Open:    116.57,
-			Symbol:  "AAPL",
-			Volume:  46691331,
-			ID:      "HISTORICAL_PRICES",
-			Key:     "AAPL",
-			Date:    time.Date(2020, time.November, 30, 0, 0, 0, 0, time.UTC),
-			Updated: time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
-			UOpen:   116.57,
-			UHigh:   117.49,
-			ULow:    116.22,
-			UClose:  116.59,
-			UVolume: 46691331,
-			FOpen:   116.57,
-			FHigh:   117.49,
-			FLow:    116.22,
-			FClose:  116.59,
-			FVolume: 46691331,
-			Label:   "Nov 27, 20",
+			Close:                116.59,
+			High:                 117.49,
+			Low:                  116.22,
+			Open:                 116.57,
+			Symbol:               "AAPL",
+			Volume:               func(i float64) *float64 { return &i }(46691331),
+			ID:                   "HISTORICAL_PRICES",
+			Key:                  "AAPL",
+			Date:                 time.Date(2020, time.November, 30, 0, 0, 0, 0, time.UTC),
+			Updated:              time.Date(2020, time.November, 30, 14, 33, 10, 0, time.UTC),
+			ChangeOverTime:       func(i float64) *float64 { return &i }(-0),
+			MarketChangeOverTime: func(i float64) *float64 { return &i }(-0),
+			UOpen:                116.57,
+			UHigh:                117.49,
+			ULow:                 116.22,
+			UClose:               116.59,
+			UVolume:              func(i float64) *float64 { return &i }(46691331),
+			FOpen:                116.57,
+			FHigh:                117.49,
+			FLow:                 116.22,
+			FClose:               116.59,
+			FVolume:              func(i float64) *float64 { return &i }(46691331),
+			Label:                "Nov 27, 20",
+			Change:               func(i float64) *float64 { return &i }(-0),
+			ChangePercent:        func(i float64) *float64 { return &i }(-0),
 		}}
 	})
 
@@ -63,6 +67,10 @@ var _ = Describe("Historical", func() { // nolint: dupl
 
 	It("should match the golden file", func() {
 		golden := GoldenHistorical()
+		golden[0].ChangeOverTime = func(i float64) *float64 { return &i }(-0)
+		golden[0].MarketChangeOverTime = func(i float64) *float64 { return &i }(-0)
+		golden[0].Change = func(i float64) *float64 { return &i }(-0)
+		golden[0].ChangePercent = func(i float64) *float64 { return &i }(-0)
 		if !cmp.Equal(golden, expected) {
 			helper.ToGolden("historical", expected)
 			Fail(cmp.Diff(golden, expected))

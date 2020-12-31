@@ -25,27 +25,28 @@ import (
 // Intraday represents a data point from the Intraday Prices endpoint.
 // https://iexcloud.io/docs/api/#intraday-prices
 type Intraday struct {
-	Date                 time.Time `json:"date"`
-	Minute               string    `json:"minute"`
-	Label                string    `json:"label"`
-	MarketOpen           float64   `json:"marketOpen"`
-	MarketHigh           float64   `json:"marketHigh"`
-	MarketLow            float64   `json:"marketLow"`
-	MarketClose          float64   `json:"marketClose"`
-	MarketVolume         int       `json:"marketVolume"`
-	MarketAverage        float64   `json:"marketAverage"`
-	MarketNotional       float64   `json:"marketNotional"`
-	MarketNumberOfTrades int       `json:"marketNumberOfTrades"`
-	MarketChangeOverTime float64   `json:"marketChangeOverTime"`
-	Open                 float64   `json:"open"`
-	High                 float64   `json:"high"`
-	Low                  float64   `json:"low"`
-	Close                float64   `json:"close"`
-	Volume               int       `json:"volume"`
-	Average              float64   `json:"average"`
-	Notional             float64   `json:"notional"`
-	NumberOfTrades       int       `json:"numberOfTrades"`
-	ChangeOverTime       float64   `json:"changeOverTime"`
+	Symbol               string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	Date                 time.Time `json:"date,omitempty" gorm:"primaryKey"`
+	Minute               string    `json:"minute,omitempty" gorm:"type:character varying"`
+	Label                string    `json:"label,omitempty" gorm:"type:character varying"`
+	MarketOpen           float64   `json:"marketOpen,omitempty" gorm:"type:double precision"`
+	MarketHigh           float64   `json:"marketHigh,omitempty" gorm:"type:double precision"`
+	MarketLow            float64   `json:"marketLow,omitempty" gorm:"type:double precision"`
+	MarketClose          float64   `json:"marketClose,omitempty" gorm:"type:double precision"`
+	MarketVolume         int       `json:"marketVolume,omitempty"`
+	MarketAverage        float64   `json:"marketAverage,omitempty" gorm:"type:double precision"`
+	MarketNotional       float64   `json:"marketNotional,omitempty" gorm:"type:double precision"`
+	MarketNumberOfTrades int       `json:"marketNumberOfTrades,omitempty"`
+	MarketChangeOverTime float64   `json:"marketChangeOverTime,omitempty" gorm:"type:double precision"`
+	Open                 float64   `json:"open,omitempty" gorm:"type:double precision"`
+	High                 float64   `json:"high,omitempty" gorm:"type:double precision"`
+	Low                  float64   `json:"low,omitempty" gorm:"type:double precision"`
+	Close                float64   `json:"close,omitempty" gorm:"type:double precision"`
+	Volume               int       `json:"volume,omitempty"`
+	Average              float64   `json:"average,omitempty" gorm:"type:double precision"`
+	Notional             float64   `json:"notional,omitempty" gorm:"type:double precision"`
+	NumberOfTrades       int       `json:"numberOfTrades,omitempty"`
+	ChangeOverTime       float64   `json:"changeOverTime,omitempty" gorm:"type:double precision"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
@@ -72,7 +73,7 @@ func (i *Intraday) UnmarshalJSON(data []byte) (err error) {
 
 // MarshalJSON satisfies the json.Marshaler interface.
 // It undoes what UnmarshalJSON does.
-func (i *Intraday) MmarshalJSON() ([]byte, error) {
+func (i *Intraday) MarshalJSON() ([]byte, error) {
 	type intraday Intraday
 	type embedded struct {
 		intraday

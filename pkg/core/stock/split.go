@@ -25,18 +25,18 @@ import (
 // Split represents a data point from the basic splits endpoint.
 // https://iexcloud.io/docs/api/#splits-basic
 type Split struct {
-	ExDate       time.Time `json:"exDate,omitempty"`
-	DeclaredDate time.Time `json:"declaredDate,omitempty"`
-	Ratio        float64   `json:"ratio,omitempty"`
+	DeclaredDate time.Time `json:"declaredDate,omitempty" gorm:"type:date"`
+	Ratio        float64   `json:"ratio,omitempty" gorm:"type:double precision"`
 	ToFactor     int       `json:"toFactor,omitempty"`
 	FromFactor   int       `json:"fromFactor,omitempty"`
-	Description  string    `json:"description,omitempty"`
-	Symbol       string    `json:"symbol,omitempty"`
-	ID           string    `json:"id,omitempty"`
-	Source       string    `json:"source,omitempty"`
-	Key          string    `json:"key,omitempty"`
-	Subkey       string    `json:"subkey,omitempty"`
-	Date         time.Time `json:"date,omitempty"`
+	Description  string    `json:"description,omitempty" gorm:"type:character varying"`
+	Symbol       string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	ExDate       time.Time `json:"exDate,omitempty" gorm:"primaryKey;type:date"`
+	ID           string    `json:"id,omitempty" gorm:"-"`
+	Source       string    `json:"source,omitempty" gorm:"-"`
+	Key          string    `json:"key,omitempty" gorm:"-"`
+	Subkey       string    `json:"subkey,omitempty" gorm:"-"`
+	Date         time.Time `json:"date,omitempty" gorm:"type:date"`
 	Updated      time.Time `json:"updated,omitempty"`
 }
 

@@ -27,16 +27,16 @@ import (
 // https://iexcloud.io/docs/api/#dividends-basic and
 // https://iexcloud.io/docs/api/#upcoming-events for more information.
 type UpcomingDividend struct {
-	ExDate       time.Time `json:"exDate"`
-	PaymentDate  time.Time `json:"paymentDate"`
-	RecordDate   time.Time `json:"recordDate"`
-	DeclaredDate time.Time `json:"declaredDate"`
-	Amount       float64   `json:"amount"`
-	Flag         string    `json:"flag"`
-	Currency     string    `json:"currency"`
-	Description  string    `json:"description"`
-	Frequency    string    `json:"frequency"`
-	Symbol       string    `json:"symbol"`
+	Symbol       string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
+	ExDate       time.Time `json:"exDate,omitempty" gorm:"primaryKey;type:date"`
+	PaymentDate  time.Time `json:"paymentDate,omitempty" gorm:"type:date"`
+	RecordDate   time.Time `json:"recordDate,omitempty" gorm:"type:date"`
+	DeclaredDate time.Time `json:"declaredDate,omitempty" gorm:"type:date"`
+	Amount       float64   `json:"amount,omitempty" gorm:"type:double precision"`
+	Flag         string    `json:"flag,omitempty" gorm:"type:character varying"`
+	Currency     string    `json:"currency,omitempty" gorm:"type:character varying"`
+	Description  string    `json:"description,omitempty" gorm:"type:character varying"`
+	Frequency    string    `json:"frequency,omitempty" gorm:"type:character varying"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
