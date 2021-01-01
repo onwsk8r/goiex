@@ -39,7 +39,7 @@ type Option struct {
 	Currency            string    `json:"currency,omitempty" gorm:"type:character varying"`
 	ExchangeCode        string    `json:"exchangeCode,omitempty" gorm:"type:character varying"`
 	ExchangeMIC         string    `json:"exchangeMIC,omitempty" gorm:"type:character varying"`
-	ExerciseStyle       string    `json:"exerciseStyle,omitempty" gorm:"type:character varying"`
+	ExerciseStyle       style     `json:"exerciseStyle,omitempty" gorm:"type:option_style"`
 	FIGI                string    `json:"figi,omitempty" gorm:"type:character varying"`
 	High                *float64  `json:"high,omitempty" gorm:"type:double precision"`
 	LastTrade           time.Time `json:"-"`
@@ -52,9 +52,9 @@ type Option struct {
 	Symbol              string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
 	ExpirationDate      time.Time `json:"-" gorm:"primaryKey;type:date"`
 	StrikePrice         float64   `json:"strikePrice,omitempty" gorm:"primaryKey;type:double precision"`
-	Side                string    `json:"side,omitempty" gorm:"primaryKey;type:character varying"`
+	Side                side      `json:"side,omitempty" gorm:"primaryKey;type:option_side"`
 	IsAdjusted          bool      `json:"isAdjusted,omitempty" gorm:"primaryKey"`
-	Type                string    `json:"type,omitempty" gorm:"type:character varying"`
+	Type                oType     `json:"type,omitempty" gorm:"type:option_type"`
 	Volume              *uint     `json:"volume,omitempty"`
 	ID                  string    `json:"id,omitempty" gorm:"-"`
 	Key                 string    `json:"key,omitempty" gorm:"-"`
