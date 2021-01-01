@@ -44,7 +44,7 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.sum') }}
       - run: go install github.com/onsi/ginkgo/ginkgo
-      - run: ginkgo -r --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress --compilers=2 --nodes=2
+      - run: ginkgo -r --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress --compilers=2 --nodes=1
   integration-test:
     runs-on: ubuntu-latest
     name: Run Integration Tests (go v1.15)
