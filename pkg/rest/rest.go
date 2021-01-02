@@ -42,7 +42,9 @@ var (
 )
 
 // RequestsPerSecond is used by NewClient to implement rate limiting
-var RequestsPerSecond = 50
+// The low default is to prevent 429's: 50 RPS had three failures in
+// five requests for a total of eight requests.
+var RequestsPerSecond = 20
 
 // MaxRetries is used by NewClient to limit the number of retry attempts
 var MaxRetries = 5
