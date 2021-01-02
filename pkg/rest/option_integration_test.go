@@ -74,7 +74,7 @@ var _ = Describe("Options", func() {
 			}
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(res)).To(BeNumerically(">", 20))
-			Expect(len(res)).To(BeNumerically("<", 60))
+			Expect(len(res)).To(BeNumerically("<", 100))
 			for idx := range res {
 				By(fmt.Sprintf("Having valid values at %d", idx))
 				Expect(res[idx].Validate()).To(Succeed())
