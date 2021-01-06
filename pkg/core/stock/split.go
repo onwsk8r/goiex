@@ -27,8 +27,8 @@ import (
 type Split struct {
 	DeclaredDate time.Time `json:"declaredDate,omitempty" gorm:"type:date"`
 	Ratio        float64   `json:"ratio,omitempty" gorm:"type:double precision"`
-	ToFactor     int       `json:"toFactor,omitempty"`
-	FromFactor   int       `json:"fromFactor,omitempty"`
+	ToFactor     float64   `json:"toFactor,omitempty" gorm:"type:double precision"`
+	FromFactor   float64   `json:"fromFactor,omitempty" gorm:"type:double precision"`
 	Description  string    `json:"description,omitempty" gorm:"type:character varying"`
 	Symbol       string    `json:"symbol,omitempty" gorm:"primaryKey;type:character varying"`
 	ExDate       time.Time `json:"exDate,omitempty" gorm:"primaryKey;type:date"`
