@@ -74,7 +74,7 @@ var _ = Describe("Stock", func() {
 		It("should successfully get and parse intraday prices", func() {
 			res, err := s.HistoricalIntraday(ctx, "GOOG", HistoricalIntradayPeriod5dm, nil)
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("%+v", err))
-			Expect(len(res)).To(BeNumerically("~", 39*5, 50))
+			Expect(len(res)).To(BeNumerically("~", 160, 50))
 
 			for idx := range res {
 				Expect(res[idx].Validate()).To(Succeed())
