@@ -94,7 +94,7 @@ var _ = Describe("Stock", func() {
 		It("should successfully get and parse previous day prices", func() {
 			res, err := s.PreviousDayMarket(ctx)
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("%+v", err))
-			Expect(len(res)).To(BeNumerically("~", 9000, 500))
+			Expect(len(res)).To(BeNumerically("~", 9000, 1500))
 
 			for idx := range res {
 				Expect(res[idx].Validate()).To(Succeed())
