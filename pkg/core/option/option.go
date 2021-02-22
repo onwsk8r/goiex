@@ -84,16 +84,20 @@ func (o *Option) UnmarshalJSON(data []byte) (err error) {
 	}
 	*o = Option(tmp.option)
 	if o.ExpirationDate, err = time.Parse("20060102", tmp.ExpirationDate); err != nil {
-		return
+		if o.ExpirationDate, err = time.Parse("2006-01-02", tmp.ExpirationDate); err != nil {
+			return
+		}
 	}
 	if o.LastUpdated, err = time.Parse("2006-01-02", tmp.LastUpdated); err != nil {
-		return
+		if o.LastUpdated, err = time.Parse("20060102", tmp.LastUpdated); err != nil {
+			return
+		}
 	}
 	val := fmt.Sprintf("%sT%s", tmp.LastTradeDate, tmp.LastTradeTime)
 	o.LastTrade, _ = time.ParseInLocation("2006-01-02T15:04:05", val, time.UTC) // nolint:errcheck
 	o.Date = time.Unix(tmp.Date/1000, tmp.Date%1000*1e6)                        // nolint:gomnd
 	o.Updated = time.Unix(tmp.Updated/1000, tmp.Updated%1000*1e6)               // nolint:gomnd
-	return
+	return                                                                      // nolint:nakedret
 }
 
 func (o *Option) MarshalJSON() ([]byte, error) {
