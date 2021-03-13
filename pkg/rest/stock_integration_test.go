@@ -77,7 +77,8 @@ var _ = Describe("Stock", func() {
 			Expect(len(res)).To(BeNumerically("~", 160, 50))
 
 			for idx := range res {
-				Expect(res[idx].Validate()).To(Succeed())
+				Expect(res[idx].Validate()).To(
+					SatisfyAny(Succeed(), MatchError("market close is zero")))
 			}
 		})
 	})
