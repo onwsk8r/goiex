@@ -38,7 +38,9 @@ var _ = Describe("Market", func() {
 		It("should successfully get and parse upcoming dividends", func() {
 			res, err := m.UpcomingDividends(ctx, "market")
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("%+v", err))
-			Expect(len(res)).To(BeNumerically(">", 500))
+			// Historically there have always been >500 dividends, but a build
+			// failed on account of only finding 339. Regardless, expect a bunch.
+			Expect(len(res)).To(BeNumerically(">", 100))
 			Expect(len(res)).To(BeNumerically("<", 2500))
 
 			for idx := range res {
