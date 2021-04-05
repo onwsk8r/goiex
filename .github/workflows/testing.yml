@@ -68,7 +68,7 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-      - uses: mathieudutour/github-tag-action@v5.3
+      - uses: mathieudutour/github-tag-action@v5.4
         id: tag_version
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
