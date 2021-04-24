@@ -23,18 +23,20 @@ import (
 )
 
 // Symbol represents one datum of that returned by the ref-data/symbols endpoint.
-type Symbol struct {
-	Symbol   string    `json:"symbol"`
-	Name     string    `json:"name"`
-	Exchange string    `json:"exchange"`
-	IEXID    string    `json:"iexId"`
-	Currency string    `json:"currency"`
-	Date     time.Time `json:"-"`
-	Type     string    `json:"type"`
-	Enabled  bool      `json:"isEnabled"`
-	Region   string    `json:"region"`
-	FIGI     string    `json:"figi"`
-	CIK      string    `json:"cik"`
+type Symbol struct { // nolint:govet
+	ID        int       `json:"-"`
+	CreatedAt time.Time `json:"-"`
+	Symbol    string    `json:"symbol" gorm:"type:character varying;not null;index"`
+	Exchange  string    `json:"exchange" gorm:"type:character varying"`
+	Name      string    `json:"name" gorm:"type:character varying"`
+	Date      time.Time `json:"-" gorm:"type:date"`
+	Enabled   bool      `json:"isEnabled"`
+	Type      string    `json:"type" gorm:"type:character varying"`
+	Region    string    `json:"region" gorm:"type:character(2)"`
+	Currency  string    `json:"currency" gorm:"type:character(3)"`
+	IEXID     string    `json:"iexId" gorm:"type:character(20);check:iex_id IS NOT NULL OR figi IS NOT NULL OR cik IS NOT NULL;uniqueIndex:,where:iex_id IS NOT NULL"` // nolint:lll
+	FIGI      string    `json:"figi" gorm:"type:character(12);uniqueIndex:,where:figi IS NOT NULL"`
+	CIK       string    `json:"cik" gorm:"type:character(10);uniqueIndex:,where:cik IS NOT NULL"`
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
@@ -42,7 +44,7 @@ type Symbol struct {
 // into a time.Time by using time.Parse().
 func (s *Symbol) UnmarshalJSON(data []byte) (err error) {
 	type symbol Symbol
-	type embedded struct {
+	type embedded struct { // nolint:govet
 		symbol
 		Date string `json:"date"`
 	}
@@ -59,7 +61,7 @@ func (s *Symbol) UnmarshalJSON(data []byte) (err error) {
 // into a time.Time by using time.Parse().
 func (s *Symbol) MarshalJSON() ([]byte, error) {
 	type symbol Symbol
-	type embedded struct {
+	type embedded struct { // nolint:govet
 		symbol
 		Date string `json:"date"`
 	}
