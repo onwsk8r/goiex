@@ -52,8 +52,8 @@ var _ = Describe("Reference", func() {
 		It("should successfully get and parse option symbols", func() {
 			res, err := r.OptionsSymbols(ctx)
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("%+v", err))
-			Expect(len(res)).To(BeNumerically(">", 25000))
-			Expect(len(res)).To(BeNumerically("<", 100000))
+			Expect(len(res)).To(BeNumerically(">", 2500))
+			Expect(len(res)).To(BeNumerically("<", 10000))
 
 			for idx := range res {
 				Expect(len(idx)).To(SatisfyAll(BeNumerically(">=", 1), BeNumerically("<", 16)))
