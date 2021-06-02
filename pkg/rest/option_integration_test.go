@@ -42,7 +42,7 @@ var _ = Describe("Options", func() {
 			Expect(len(res)).To(BeNumerically(">", 10))
 
 			now := time.Now().Add(-32 * 24 * time.Hour)
-			later := now.Add(5 * 365 * 24 * time.Hour)
+			later := now.Add(10 * 365 * 24 * time.Hour)
 			var then time.Time
 			for idx := range res {
 				By(fmt.Sprintf("Having the correct value at %d (%s)", idx, res[idx]))
