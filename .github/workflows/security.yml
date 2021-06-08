@@ -40,3 +40,23 @@ jobs:
           languages: go
       - uses: github/codeql-action/autobuild@v1
       - uses: github/codeql-action/analyze@v1
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - name: gitleaks-action
+        uses: zricethezav/gitleaks-action@master
+  trivy-repo:
+    name: Trivy Repository Scan
+    runs-on: ubuntu-18.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          exit-code: 0
